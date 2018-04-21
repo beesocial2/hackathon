@@ -84,13 +84,10 @@
                 
                 circs = [];
                 lines = [];
-                
-                
-                /*for(i = 0; i<N; i++){*/
                     var user;
-                
-                    golos.api.getAccounts(names.slice(0,N), function(err, result) {
-                        console.log(result);
+                    var currentNamesArray = names.slice(0,N);
+                    golos.api.getAccounts(currentNamesArray, function(err, result) {
+                        //console.log(result);
                         result.forEach(function(item,i){
                             
                             var circ = new Object();
@@ -105,21 +102,20 @@
                             circ.description = info.description;
                             circ.img = info.img;
                             circs.push(circ);
-                            console.log(circs);
+                            //console.log(circs);
                         });
-                        
                         redrawCircs(circs);
                         
-                        if(N==2 || N==3){
+                        /*if( N==3){
                             console.log('lines');
                             
                             //------lines-------------------------
-                            var line = new Object();
+                            /*var line = new Object();
                             let jsonMetadata1;
-                            if(N==2){
+                            /*if(N==2){
                                 jsonMetadata1 = '{"from":"priorbank","to":"imaguru","type":"project","description":"Hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
-                            }
-                            if(N==3){
+                            }*/
+                            /*if(N==3){
                                 jsonMetadata1 = '{"from":"imaguru","to":"monkeyfood","type":"project","description":"Hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
                             }
                             info = JSON.parse(jsonMetadata1);
@@ -130,16 +126,46 @@
                             line.type = info.type;
                             lines.push(line);
                             redrawLines(lines);
-                        }
+                        }*/
+                        //искать всевозможные транзакции между существующими участниками
+                        //цикл по именам
+                        names.slice(0,N).forEach(function(itemName){
+                            
+                            //все транзакции для текущего имени
+                            golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
+                                //console.log(err, result);
+                                
+                                //отсеивание валидных транзакций
+                                //если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
+                                result.forEach(function(item){
+                                    //console.log(item[1]);
+                                    if(item[1].op[0]=="transfer" 
+                                       && item[1].op[1].memo.length>100 
+                                       && isCircExist(item[1].op[1].to)
+                                       && item[1].op[1].from == itemName
+                                    ){
+                                        //console.log(item);
+                                        
+                                        let line = new Object();
+                                        let info = JSON.parse(item[1].op[1].memo);
+                                        line.from = getCircByName(info.from).ID;
+                                        
+                                        info.to = info.to.replace(' d','');
+                                        
+                                        line.to = getCircByName(info.to).ID;
+                                        line.description = info.description;
+                                        line.type = info.type;
+                                        lines.push(line);
+                                        console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
+                                        //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));
+                                    }
+                                });
+                                //console.log(result[17][1].op);
+                            });
+                        });
+                        
                         N++;
                     });
-                    
-                    
-                    
-                /*}*/
-                
-                          
-                //redrawLines(lines);
                 
             });
             
@@ -154,6 +180,17 @@
                         return circs[i];
                     }
                 }
+                return null;
+            }
+           function getCircByName(targetName){
+                for(i=0;i<circs.length;i++){
+                    //console.log(circs[i].permName+' '+targetName);
+                    if(circs[i].permName == targetName){
+                        //console.log('here');
+                        return circs[i];
+                    }
+                }
+                return null;
             }
             function getAccountColor(type){
                 if(type=="npo"){
@@ -179,14 +216,17 @@
             function hideInfo(){
                 let blockInfo = document.getElementsByClassName('info')[0].innerHTML='';
             }
-            function getCircByName(targetName){
-                for(i=0;i<circs.length;i++){
-                    if(circs[i].permName == targetName){
-                        return circs[i];
-                    }
+            
+            function isCircExist(targetName){
+                if(getCircByName(targetName)==null){
+                    return false;
+                }else{
+                    return true;
                 }
             }
-           
+           function getTypeOfCirc(name){
+               return getCircByName(name).type;
+           }
             
            
        });
