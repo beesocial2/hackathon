@@ -2,7 +2,7 @@
 golos.config.set('websocket', 'wss://ws.testnet.golos.io');
 golos.config.set('address_prefix', 'GLS');
 golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
-var	hash = location.hash.substring(1), // geting hash
+var hash = location.hash.substring(1), // geting hash
 	resultContent = ''; // global variable for content
 if (hash != '') getHash();
 window.onhashchange = function () {
@@ -18,13 +18,13 @@ function getTransaction(callback) {
 	document.getElementsByTagName('tbody')[0].innerHTML = '';
 	var $div = document.createElement('tr'); // inserting header in poll 
 	$div.innerHTML = `
-          <th scope="row">1</th>
-          <td>` + resultContent.permlink + `</td>
-          <td>` + resultContent.author + `</td>
-          <td>@XYZ</td>
-          <td>` + resultContent.body + `</td>
-          <td>Otto</td>
-          <td>@mdo</td>
+       <th scope="row">1</th>
+        <td>` + resultContent.permlink + `</td>
+		<td>` + resultContent.json_metadata.from + `</td>
+          <td>` + resultContent.json_metadata.to + `</td>
+          <td>` + resultContent.json_metadata.project + `</td>
+          <td>` + resultContent.json_metadata.resource + `</td>
+          <td>` + resultContent.created + `</td>
         </tr>`;
 	document.getElementsByTagName('tbody')[0].appendChild($div);
 	if (callback) callback();
