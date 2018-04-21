@@ -4,22 +4,55 @@ golos.config.set('address_prefix', 'GLS');
 golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
 var hash = location.hash.substring(1), // geting hash
 	resultContent = ''; // global variable for content
-if (hash != '') getHash();
+/* if (hash != '') getHash();
 window.onhashchange = function () {
 	hash = location.hash.substring(1);
 	console.log('hash has been changed: ', hash);
 	if (hash != '') getHash();
-};
+}; */
 if (wif) {
 	document.getElementById('signin').className = 'btn btn-outline-danger my-2 my-sm-0';
 	document.getElementById('signin').innerHTML = 'Log out';
 	document.querySelector('.user-menu').style = 'display: block; padding-right: 1rem;';
 }
-/* = {"from":"imaguru","to":"fund dobra","description":"Project: hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend"} */
+
+/* golos.api.getAccounts([username], function(err, result) {
+	console.log(resultContent.json_metadata = JSON.parse(result));
+}); */
+
+function doTransfer() {
+	/* 'fundobra', '0.001 GOLOS', '{"from":"imaguru","to":"fund dobra","project":"hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend","permlink":"imaguru/beesocialapp-1524340568454"}', function(err, result) { GLS5f3mqM3kVpZLReeMnuPdfJnWqy2PSecg743DPZ6HJnXbhZ65KA*/
+	var wif = '5J5V5Wahrw34qfWgPPL3PGTaLuy5Ec7S8Fuh7Hd2XR1rhb1TQyd';
+	var from = 'imaguru';
+	var to = 'fundobra';
+	var amount = '1.000 GOLOS';
+	var memo = '{"from":"imaguru","to":"fundobra","project":"hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend","permlink":"imaguru/beesocialapp-1524340568454"}';
+	golos.broadcast.transfer(wif, from, to, amount, memo, function (err, result) {
+		//console.log(err, result);
+		if (!err) {
+			console.log('transfer', result);
+		} else console.error(err);
+	});
+}
+
+function doPost() {
+	var parentAuthor = '';
+	var parentPermlink = 'beesocialapp-npo';
+	var permlink = 'beesocialapp' + '-' + Date.now();
+	var title = 'Save Villy!';
+	var body = `<p>'Save Villy' is a new project that unites commercial companies, social projects and volunteers.<p>The Bee Social platform unites those who want to share their resources, and those who need these resources.<p>A platform where everyone can help the social project with their resources and volunteering in exchange for Honeycombs - the crypto currency.<img src="https://beesocial.in/img/about_logo.png"><p>https://beesocial.in/`;
+	var jsonMetadata = '{"from":"imaguru","to":"fund dobra","project":"hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend"}';
+	golos.broadcast.comment(wif, parentAuthor, parentPermlink, username, permlink, title, body, jsonMetadata, function (err, result) {
+		if (!err) {
+			console.log('comment', result);
+		} else console.error(err);
+	});
+}
+
 function showPost(callback) {
 	console.log('<f> showPost');
-	resultContent.json_metadata = JSON.parse(resultContent.body); //parse json to js
-	console.log(resultContent.json_metadata);
+	resultContent.json_metadata = JSON.parse(resultContent.json_metadata);
+	//console.log(resultContent.json_metadata);
 	document.getElementsByTagName('tbody')[0].innerHTML = '';
 	var $div = document.createElement('tr'); // inserting header in poll 
 	$div.innerHTML = `
@@ -28,12 +61,12 @@ function showPost(callback) {
 		<td>` + resultContent.json_metadata.from + `</td>
           <td>` + resultContent.json_metadata.to + `</td>
           <td>` + resultContent.json_metadata.project + `</td>
-          <td>` + resultContent.json_metadata.resource + ` SUC</td>
-          <td>` + resultContent.created + `</td>
+          <td>` + resultContent.json_metadata.tokens + ` SUC</td>
+          <td>` + resultContent.json_metadata.moreinfo + `</td>
         </tr>`;
 	document.getElementsByTagName('tbody')[0].appendChild($div);
-	document.querySelector('.lding').style.display = 'none';
 	if (callback) callback();
+	document.querySelector('.lding').style.display = 'none';
 }
 
 function getHash() {
@@ -153,3 +186,10 @@ document.getElementById('signin').addEventListener('click', () => {
 		});
 	}
 }, false);
+
+document.onreadystatechange = function () { // loading animation switch-off
+	console.log('<f> doc ready');
+	if (document.readyState === "complete") {
+		document.querySelector('.lding').style.display = 'none';
+	}
+}
