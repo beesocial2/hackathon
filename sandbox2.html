@@ -106,29 +106,34 @@
                             circ.img = info.img;
                             circs.push(circ);
                             console.log(circs);
-                            
                         });
                         
                         redrawCircs(circs);
+                        
+                        if(N==2 || N==3){
+                            console.log('lines');
+                            //------lines-------------------------
+                            var line = new Object();
+                            let jsonMetadata1;
+                            if(N==2){
+                                jsonMetadata1 = '{"from":"priorbank","to":"imaguru","type":"project","description":"Hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
+                            }
+                            if(N==3){
+                                jsonMetadata1 = '{"from":"priorbank","to":"imaguru","type":"project","description":"Hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
+                            }
+                            info = JSON.parse(jsonMetadata1);
+                            
+                            line.from = getCircByName(info.from).ID;
+                            line.to = getCircByName(info.to).ID;
+                            line.description = info.description;
+                            line.type = info.type;
+                            lines.push(line);
+                            redrawLines(lines);
+                        }
                         N++;
                     });
                     
                     
-                    //------lines-------------------------
-                    /*var line = new Object();
-                    let jsonMetadata1 = '{"from":"imaguru","to":"fund dobra","type":"project","description":"Hackathon Social Weekend","":"","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
-                    info = JSON.parse(jsonMetadata1);
-                    
-                    if(i==0){
-                        line.from = 0;
-                    }else{
-                        line.from = i-1;
-                    }
-                    line.to = i;
-                    line.description = info.description;
-                    line.type = info.type;
-                    lines.push(line);
-                    */
                     
                 /*}*/
                 
@@ -173,8 +178,12 @@
             function hideInfo(){
                 let blockInfo = document.getElementsByClassName('info')[0].innerHTML='';
             }
-            function getIndexByName(targetName){
-                
+            function getCircByName(targetName){
+                for(i=0;i<circs.length;i++){
+                    if(circs[i].permName == targetName){
+                        return circs[i];
+                    }
+                }
             }
            
             
