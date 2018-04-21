@@ -2,126 +2,186 @@
 <html>
    <head>
        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+       <link rel="stylesheet" href="css/styleSVG.css">
    </head>
     <body style="margin:0">
-        <svg data-toggle="tooltip" data-placement="right" title="Tooltip on right"></svg>
+        <svg></svg>
     </body>
-
+    
    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/golos-js@0.6.1/dist/golos.min.js"></script>
+    
+    
    <script>
-       var N = 5;
-       var svg = d3.select("svg")
-        .attr('width',window.innerWidth)
-        .attr('height',window.innerHeight);
+       golos.config.set('websocket', 'wss://ws.testnet.golos.io');
+       golos.config.set('address_prefix', 'GLS');
+       golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
        
+       $(document).ready(function(){
+            
+          
+           
+           
+           
+            var svg = d3.select("svg")
+             .attr('width',window.innerWidth)
+             .attr('height',window.innerHeight);
        
-       function redrawLines(data){
-           var line = svg.selectAll("line")
-            .data(data, function(d){ return d; });
            
-           line.enter().append("line")
-            .attr("x1", function(d){ return getCoord(d.from)[0];})
-            .attr("y1", function(d){ return getCoord(d.from)[1];})
-            .attr("x2", function(d){ return getCoord(d.to)[0];})
-            .attr("y2", function(d){ return getCoord(d.to)[1];})
-            .attr("stroke","#000000");
-           line.exit().remove();
-       }
+            function redrawLines(data){
+                var line = svg.selectAll("line")
+                 .data(data, function(d){ return d; });
+                
+                line.enter().append("line")
+                 .attr("x1", function(d){ return getCoord(d.from)[0];})
+                 .attr("y1", function(d){ return getCoord(d.from)[1];})
+                 .attr("x2", function(d){ return getCoord(d.to)[0];})
+                 .attr("y2", function(d){ return getCoord(d.to)[1];})
+                 .attr("stroke",function(d){return getTransactionColor(d.type);})
+                 .attr("data-toggle","tooltip")
+                 .attr("data-placement","right")
+                 .attr("title",function(d){return d.description});
+                
+                line.exit().remove();
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip();
+                });
+            }
        
-       function redrawCircs(data){
-            var circle = svg.selectAll("circle")
-             .data(data, function(d) { return d; });
-           
-           circle.enter().append("circle")
-                .attr("cy", function(d){return d.y;})
-                .attr("cx", function(d){return d.x;})
-                .attr("r", 10)
-                .attr("id",function(d){return d.ID;})
-                .attr("fill", function(d){return getAccountColor(d.type);});
-           
-           circle.exit().remove();
-           
-           
-        }
+            function redrawCircs(data){
+                 var circle = svg.selectAll("circle")
+                  .data(data, function(d) { return d; });
+                
+                circle.enter().append("circle")
+                     .attr("cy", function(d){return d.y;})
+                     .attr("cx", function(d){return d.x;})
+                     .attr("r", 10)
+                     .attr("id",function(d){return d.ID;})
+                     .attr("fill", function(d){return getAccountColor(d.type);})
+                     .attr("data-toggle","tooltip")
+                     .attr("data-placement","right")
+                     .attr("data-html","true")
+                     .attr("title",function(d){return '<p>'+d.type+'</p><p>'+d.name+'<p></p>'+d.description+'</p>';});
+                ;
+                circle.exit().remove();
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip();
+                });
+                
+             }
        
        //SVG------------------------------------------
        
        //DATA-----------------------------------------
-       var circs = [];
-       var lines = [];
-       var N=1;
-       window.addEventListener('click',function(){
+            var circs = [];
+            var lines = [];
+            var names = ['priorbank','imaguru','monkeyfood','ecotheatre','greenetwork','botcube','fundobra','maria-knop','anton-shvab'];
+            var N=1;
+            window.addEventListener('click',function(){
+                
+                circs = [];
+                lines = [];
+                
+                
+                /*for(i = 0; i<N; i++){*/
+                    var user;
+                
+                    golos.api.getAccounts(names.slice(0,N), function(err, result) {
+                        console.log(result);
+                        result.forEach(function(item,i){
+                            
+                            var circ = new Object();
+                            circ.x = window.innerWidth/2 + 200*Math.cos(i*2*Math.PI/N);
+                            circ.y = window.innerHeight/2 + 200*Math.sin(i*2*Math.PI/N);
+                            circ.ID = i;
+                            circ.Id = item.id;
+                            circ.permName = item.name;
+                            let info = JSON.parse( item.json_metadata);
+                            circ.name = info.name;
+                            circ.type = info.type;
+                            circ.description = info.description;
+                            circ.img = info.img;
+                            circs.push(circ);
+                            console.log(circs);
+                            
+                        });
+                        
+                        redrawCircs(circs);
+                        N++;
+                    });
+                    
+                    
+                    //------lines-------------------------
+                    /*var line = new Object();
+                    let jsonMetadata1 = '{"from":"imaguru","to":"fund dobra","type":"project","description":"Hackathon Social Weekend","":"","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
+                    info = JSON.parse(jsonMetadata1);
+                    
+                    if(i==0){
+                        line.from = 0;
+                    }else{
+                        line.from = i-1;
+                    }
+                    line.to = i;
+                    line.description = info.description;
+                    line.type = info.type;
+                    lines.push(line);
+                    */
+                    
+                /*}*/
+                
+                          
+                //redrawLines(lines);
+                
+            });
+            
+           function getCoord(id){
+                let thisCirc = getCircById(id);
+                return [thisCirc.x,thisCirc.y];
+            }
+            
+            function getCircById(id){
+                for(i=0;i<circs.length;i++){
+                    if(circs[i].ID == id){
+                        return circs[i];
+                    }
+                }
+            }
+            function getAccountColor(type){
+                if(type=="npo"){
+                    return "#4ad331";
+                }else if(type=="sponsor"){
+                    return "#eb2828";
+                }else if(type=="volunteer"){
+                    return "#ebf247";
+                }
+            }
+            function getTransactionColor(type){
+                if(type=="resource"){
+                    return "#9036dd";
+                }else if(type=="project"){
+                    return "#2e9cbe";
+                }
+            }
+            function showInfo(obj){
+                let blockInfo = document.getElementsByClassName('info')[0];
+                blockInfo.innerHTML = '';
+                blockInfo.innerHTML = obj.description;
+            }
+            function hideInfo(){
+                let blockInfo = document.getElementsByClassName('info')[0].innerHTML='';
+            }
+            function getIndexByName(targetName){
+                
+            }
            
-           circs = [];
-           lines = [];
+            
            
-           for(i = 0;i<N;i++){
-               
-               var circ = new Object();
-               let jsonMetadata = '{"name":"imaguru","type":"sponsor","description":"IMAGURU - это первый в Беларуси бизнес клуб, основной задачей которого является продвижение молодого бизнеса (стартапа) в нашей стране. Это новый для Беларуси формат, который оправдал себя в США, Европе, и России. Философия IMAGURU – это стремление изменить мир к лучшему. Деятельность клуба сфокусирована вокруг двух основных направлений: инновации и предпринимательство. В IMAGURU ценится желание делиться знаниями, создавать что-то новое и сделать невозможное возможным","img":"https://bel.biz/assets/new_images/images/bizumstvo/logo-imaguru.png"}';
-               let info = JSON.parse(jsonMetadata);
-               
-               circ.x = window.innerWidth/2 + 200*Math.cos(i*2*Math.PI/N);
-               circ.y = window.innerHeight/2 + 200*Math.sin(i*2*Math.PI/N);
-               circ.ID = i;
-               circ.name = info.name;
-               circ.type = info.type;
-               circ.description = info.description;
-               circ.img = info.img;
-               circs.push(circ);
-               
-               var line = new Object();
-               let jsonMetadata1 = '{"from":"imaguru","to":"fund dobra","description":"Project: hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
-               if(i==0){
-                   line.from = 0;
-               }else{
-                   line.from = i-1;
-               }
-               line.to = i;
-               lines.push(line);
-               //console.log(getCoord(line.from)+' '+getCoord(line.to));
-           }
-           
-                     
-           redrawLines(lines);
-           redrawCircs(circs);
-           //console.log(getCircById(i));
-           N++;
        });
        
        
-       
-       function getCoord(id){
-           let thisCirc = getCircById(id);
-           return [thisCirc.x,thisCirc.y];
-       }
-       
-       function getCircById(id){
-           for(i=0;i<circs.length;i++){
-               if(circs[i].ID == id){
-                   return circs[i];
-               }
-           }
-       }
-       function getAccountColor(type){
-           if(type=="npo"){
-               return "#4ad331";
-           }else if(type=="sponsor"){
-               return "#eb2828";
-           }else if(type=="volunteer"){
-               return "#ebf247";
-           }
-       }
-       function getTransactionColor(type){
-           if(type=="resource"){
-               return "#9036dd";
-           }else if(type=="project"){
-               return "#2e9cbe";
-           }
-       }
        
     </script>
 </html>
