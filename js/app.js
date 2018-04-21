@@ -13,6 +13,8 @@ window.onhashchange = function () {
 
 function getTransaction(callback) {
 	console.log('<f> getTransaction');
+	resultContent.json_metadata = JSON.parse(resultContent.body); //parse json to js
+	console.log(resultContent.json_metadata);
 	document.getElementsByTagName('tbody')[0].innerHTML = '';
 	var $div = document.createElement('tr'); // inserting header in poll 
 	$div.innerHTML = `
