@@ -54,9 +54,10 @@ line{
 <script>
     var width = window.innerWidth;
     var height = window.innerHeight;
+    var index = 0;
 function tree(){
-	var svgW=width, svgH = height, vRad=12, tree={cx:300, cy:30, w:40, h:70};
-	tree.vis={v:0, l:'?', p:{x:tree.cx, y:tree.cy},c:[]};	
+	var svgW=width, svgH = height, vRad=12, tree={cx:width/2, cy:30, w:40, h:70};
+	tree.vis={v:0, l:index.toString(), p:{x:tree.cx, y:tree.cy},c:[]};	
 	tree.size=1;
 	tree.glabels =[];
 	tree.incMatx =[];
@@ -83,10 +84,16 @@ function tree(){
 	}
 	
 	tree.addLeaf = function(_){
+        
 		function addLeaf(t){
-			if(t.v==_){ t.c.push({v:tree.size++, l:'?', p:{},c:[]}); return; }
+            
+			if(t.v==_){
+                index++;
+                t.c.push({v:tree.size++, l:index.toString(), p:{},c:[]}); return; 
+            }
 			t.c.forEach(addLeaf);
 		}
+        
 		addLeaf(tree.vis);
 		reposition(tree.vis);
 		if(tree.glabels.length != 0){
@@ -259,6 +266,7 @@ function tree(){
 			.on('click',function(){return tree.showLabel(tree.currLbl == tree.glabels.length? 1: tree.currLbl+1);});			
         /*div*/
         
+        /*treesvg*/
 		d3.select("body").append("svg").attr("width", svgW).attr("height", svgH).attr('id','treesvg');
 
 		d3.select("#treesvg").append('g').attr('id','g_lines').selectAll('line').data(tree.getEdges()).enter().append('line')
@@ -270,26 +278,33 @@ function tree(){
 			.on('click',function(d){return tree.addLeaf(d.v);});
 			
 		d3.select("#treesvg").append('g').attr('id','g_labels').selectAll('text').data(tree.getVertices()).enter().append('text')
-			.attr('x',function(d){ return d.p.x;}).attr('y',function(d){ return d.p.y+5;}).text(function(d){return d.l;})
-			.on('click',function(d){return tree.addLeaf(d.v);});	
+			.attr('x',function(d){ return d.p.x;}).attr('y',function(d){ return d.p.y+5;}).text(function(d){return d.l;});
+			//.on('click',function(d){return tree.addLeaf(d.v);});
 			
 		d3.select("#treesvg").append('g').attr('id','g_elabels').selectAll('text').data(tree.getEdges()).enter().append('text')
 			.attr('x',function(d){ return (d.p1.x+d.p2.x)/2+(d.p1.x < d.p2.x? 8: -8);}).attr('y',function(d){ return (d.p1.y+d.p2.y)/2;})
 			.text(function(d){return tree.glabels.length==0? '': Math.abs(d.l1 -d.l2);});	
-			
-		d3.select("body").select("svg").append('g').attr('transform',function(){ return 'translate('+tree.incX+','+tree.incY+')';})
+        /*treesvg*/
+        
+        
+		/*d3.select("body").select("svg").append('g').attr('transform',function(){ return 'translate('+tree.incX+','+tree.incY+')';})
 			.attr('id','incMatx').selectAll('.incrow')
 			.data(tree.incMatx.map(function(d,i){ return {i:i, r:d};})).enter().append('g').attr('class','incrow');
-
-		d3.select("#incMatx").selectAll('.incrowlabel').data(d3.range(0,tree.size)).enter()
+            */
+		/*d3.select("#incMatx").selectAll('.incrowlabel').data(d3.range(0,tree.size)).enter()
 			.append('text').attr('class','incrowlabel').text(function(d){ return d;})
 			.attr('x',function(d,i){ return (i-0.5)*tree.incS}).attr('y',function(d,i){ return (i+.8)*tree.incS});
-		
+		*/
 		tree.addLeaf(0);
 		tree.addLeaf(0);
 	}
 	initialize();
-
+    let from = 0;
+    setInterval(function(){
+        
+        tree.addLeaf(from);
+        from++;
+    },1000);
 	return tree;
 }
 var tree= tree();
