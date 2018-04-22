@@ -15,13 +15,13 @@ if (wif) {
 	document.getElementById('signin').innerHTML = 'Log out';
 	document.querySelector('.user-menu').style = 'display: block; padding-right: 1rem;';
 }
-
-/* golos.api.getAccounts([username], function(err, result) {
-	console.log(resultContent.json_metadata = JSON.parse(result));
-}); */
+if (username) {
+	golos.api.getAccounts([username], function (err, result) {
+		console.log('accType = ', JSON.parse(result[0].json_metadata).type);
+	});
+}
 
 function doTransfer() {
-	/* 'fundobra', '0.001 GOLOS', '{"from":"imaguru","to":"fund dobra","project":"hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend","permlink":"imaguru/beesocialapp-1524340568454"}', function(err, result) { GLS5f3mqM3kVpZLReeMnuPdfJnWqy2PSecg743DPZ6HJnXbhZ65KA*/
 	var wif = '5J5V5Wahrw34qfWgPPL3PGTaLuy5Ec7S8Fuh7Hd2XR1rhb1TQyd';
 	var from = 'imaguru';
 	var to = 'fundobra';
@@ -185,6 +185,15 @@ document.getElementById('signin').addEventListener('click', () => {
 			});
 		});
 	}
+}, false);
+
+document.getElementById('avatar').addEventListener('click', () => {
+	console.log('<f> avatar click');
+	swal({
+		position: 'top-end',
+		type: 'success',
+		title: 'Your work has been saved',
+	})
 }, false);
 
 document.onreadystatechange = function () { // loading animation switch-off
