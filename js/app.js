@@ -205,3 +205,47 @@ document.onreadystatechange = function () { // loading animation switch-off
 		document.querySelector('.lding').style.display = 'none';
 	}
 }
+
+window.addEventListener('click',function(){
+    
+    var myTransactions = [];
+    var myRecievers = [];
+    
+    golos.api.getAccountHistory('imaguru', -1, 100, function(err, result) {
+        //console.log(err,result);
+        
+        //отсеивание валидных транзакций
+        //если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
+        result.forEach(function(item,i){
+            //console.log(item[1]);
+            if(item[1].op[0]=="transfer" 
+               && item[1].op[1].memo.length>100
+               && item[1].op[1].from == 'imaguru'
+            ){
+                myTransactions.push(item);
+                
+                console.log(item);
+                let data = JSON.parse(item[1].op[1].memo);
+                let row = document.createElement('tr');
+                row.innerHTML = "<td>"+item[1].trx_id+"</td><td>"+item[1].op[1].from+"</td><td>"+item[1].op[1].to+"</td><td>"+data.tokens+"</td><td>"+item[1].timestamp+"</td><td>"+data.moreinfo+"</td>";
+                document.getElementsByTagName('tbody')[0].appendChild(row);
+                
+                
+                let flag = true; 
+                myRecievers.forEach(function(itemName){
+                    if(itemName==item[1].op[1].to){
+                        flag=false;
+                    }
+                });
+                if(flag==true){
+                    myRecievers.push(item[1].op[1].to);    
+                }
+            }
+        });
+        console.log(myTransactions);
+        console.log(myRecievers);
+    });
+    
+    
+
+});
