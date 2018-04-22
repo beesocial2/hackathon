@@ -1,6 +1,9 @@
 nav.navbar{
     padding: 0px 0px 0px 10px;
 }
+.dropdown-item:hover{
+    cursor: pointer;
+}
 
 .lding {
     background: black;
