@@ -224,6 +224,7 @@ document.getElementById('inTable').addEventListener('click',function(){
             if(item[1].op[0]=="transfer" 
                && item[1].op[1].memo.length>100
                && item[1].op[1].from == currentUser
+               && item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
             ){
                 
                 
@@ -245,7 +246,6 @@ document.getElementById('inTable').addEventListener('click',function(){
                 }
             }
         });
-        //console.log(myTransactions);
         //console.log(myRecievers);
     });
 });
@@ -351,10 +351,12 @@ function visualize(names){
             //console.log(err, result);
             result.forEach(function(item){
                 
+                //console.log(item);
                 if(item[1].op[0]=="transfer" 
                    && item[1].op[1].memo.length>100
                    && item[1].op[1].from == itemName
-                ){   
+                   && item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
+                ){
                     console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
                     let line = new Object();
                     let info = JSON.parse(item[1].op[1].memo);
@@ -372,12 +374,12 @@ function visualize(names){
                     //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
                 }
             });
-            console.log(lines);
+            console.log('lines: '+lines);
             redrawLines(lines);
         });
         
     });
-    console.log(circs);
+    console.log('circs: '+circs);
     redrawCircs(circs);
 });//end of names cycle
 }//end of visualize
