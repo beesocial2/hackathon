@@ -273,6 +273,7 @@ function redrawLines(data){
     .attr("data-toggle","tooltip")
     .attr("data-placement","right")
     .attr("data-html","true")
+	.attr("data-hash",function(d){return d.hash;})
     .on('mouseenter',function(d){
         $('#'+d.from).tooltip('show');
         $('#'+d.to).tooltip('show');
@@ -323,7 +324,7 @@ function visualize(names){
         console.log(result);
         result.forEach(function(item,i){
             var circ = new Object();
-            circ.x = w/2 + 200*Math.cos(i*2*Math.PI/names.length);
+            circ.x = w/3.5 + 200*Math.cos(i*2*Math.PI/names.length);
             circ.y = h/2 + 200*Math.sin(i*2*Math.PI/names.length);
             circ.ID = i;
             circ.Id = item.id;
@@ -379,12 +380,12 @@ function visualize(names){
             });
             console.log('lines: '+lines);
             redrawLines(lines);
-            redrawCircs(circs);
+            //redrawCircs(circs);
         });
         
     });
     //console.log('circs: '+circs);
-    //redrawCircs(circs);
+    redrawCircs(circs);
 });//end of names cycle
 }//end of visualize
     
