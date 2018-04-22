@@ -320,7 +320,6 @@ function visualize(names){
     circs =[];
     lines=[];
     golos.api.getAccounts(names, function(err, result){
-    
         console.log(result);
         result.forEach(function(item,i){
             var circ = new Object();
@@ -337,6 +336,7 @@ function visualize(names){
             circ.img = info.img;
             circs.push(circ);
         });
+    console.log('size: ',circs.length);
     
     
     //искать всевозможные транзакции между существующими участниками
@@ -357,8 +357,8 @@ function visualize(names){
                     console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
                     let line = new Object();
                     let info = JSON.parse(item[1].op[1].memo);
+                    console.log(getCircByName(info.from));
                     line.from = getCircByName(info.from).ID;
-                    info.to = info.to.replace(' d','');
                     if(getCircByName(info.to)==null){
                         names.push(info.to);
                         visualize(names);
@@ -380,29 +380,32 @@ function visualize(names){
             });
             console.log('lines: '+lines);
             redrawLines(lines);
+            lines = [];
             //redrawCircs(circs);
         });
         
     });
     //console.log('circs: '+circs);
     redrawCircs(circs);
+    circs = [];
 });//end of names cycle
 }//end of visualize
     
     
 function getCoord(id){
-                let thisCirc = getCircById(id);
-                return [thisCirc.x,thisCirc.y];
-            }  
+    let thisCirc = getCircById(id);
+    return [thisCirc.x,thisCirc.y];
+}  
 function getCircById(id){
-                for(i=0;i<circs.length;i++){
-                    if(circs[i].ID == id){
-                        return circs[i];
-                    }
-                }
-                return null;
-            }
+    for(i=0;i<circs.length;i++){
+        if(circs[i].ID == id){
+            return circs[i];
+        }
+    }
+    return null;
+}
 function getCircByName(targetName){
+    console.log(targetName+' '+circs.length);
     for(let i=0;i<circs.length;i++){
         if(circs[i].permName == targetName){
             return circs[i];
