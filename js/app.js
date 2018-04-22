@@ -22,20 +22,7 @@ if (username) {
 		toTable();
 	});
 }
-
-function doTransfer() {
-	var wif = '5J5V5Wahrw34qfWgPPL3PGTaLuy5Ec7S8Fuh7Hd2XR1rhb1TQyd';
-	var from = 'imaguru';
-	var to = 'fundobra';
-	var amount = '1.000 GOLOS';
-	var memo = '{"from":"imaguru","to":"fundobra","project":"hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend","permlink":"imaguru/beesocialapp-1524340568454"}';
-	golos.broadcast.transfer(wif, from, to, amount, memo, function (err, result) {
-		//console.log(err, result);
-		if (!err) {
-			console.log('transfer', result);
-		} else console.error(err);
-	});
-}
+/* {"from":"imaguru","to":"fundobra","project":"hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend","permlink":"imaguru/beesocialapp-1524340568454"} */
 
 function doPost() {
 	var parentAuthor = '';
@@ -196,41 +183,67 @@ document.querySelector('#constr').querySelector('.btn').addEventListener('click'
 	var wif = document.querySelector('#constr').querySelectorAll('.form-control')[2].value;
 	var amount = document.querySelector('#constr').querySelectorAll('.form-control')[3].value;
 	var memo = document.querySelector('#constr').querySelectorAll('.form-control')[4].value;
-	doTransfer(() => {
-			swal({ // visual 
-				type: 'success',
-				title: 'Successfull sended!',
-				toast: true,
-				showConfirmButton: false,
-				timer: 2500
-			})
-			sendVote(this.id);
-		});
-		if (err) {
+	golos.broadcast.transfer(wif, from, to, amount, memo, function (err, result) {
+		//console.log(err, result);
+		if (!err) {
 			swal({
-				type: 'error',
-				title: 'error',
-				text: err
+					title: 'success',
+					text: result,
+					type: 'success',
+					showConfirmButton: false,
+					timer: 2500
+			})
+		} else swal({
+					title: 'error',
+					text: err,
+					type: 'error',
+					showConfirmButton: false,
+					timer: 2500
 			});
-		}
+	})
 }, false);
 
 document.querySelector('#register').addEventListener('click', () => {
 	document.querySelector('#registration').style.display = 'block';
 	document.querySelector('#constr').style.display = 'none';
 	document.querySelector('.transaction').style.display = 'none';
+	document.querySelector('#main').style.display = 'none';
 }, false);
 
 document.querySelector('#constructor').addEventListener('click', () => {
 	document.querySelector('#registration').style.display = 'none';
 	document.querySelector('#constr').style.display = 'block';
 	document.querySelector('.transaction').style.display = 'none';
+	document.querySelector('#main').style.display = 'none';
 }, false);
 
 document.querySelector('#visual').addEventListener('click', () => {
 	document.querySelector('#registration').style.display = 'none';
 	document.querySelector('#constr').style.display = 'none';
 	document.querySelector('.transaction').style.display = 'block';
+	document.querySelector('#main').style.display = 'none';
+	if (username == '')
+		swal({
+			title: 'Please, enter account name here',
+			type: 'info',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			input: 'text',
+			confirmButtonText: 'ok'
+		}).then((result) => {
+			if (result.value) {
+				swal(
+					'Just a second',
+					'Please, wait',
+					'success'
+				)
+				username = result.value;
+				toTable();
+				myRecievers.push(username);
+				visualize(myRecievers);
+			}
+		})
 }, false);
 
 document.querySelector('#transactions').addEventListener('click', () => {
@@ -242,8 +255,7 @@ document.getElementById('avatar').addEventListener('click', () => {
 	swal({
 		position: 'top-end',
 		title: '<i>Cabinet</i>',
-		html: '<button type="button" class="btn btn-primary" id="operations">My operations</button>' +
-			'<button type="button" class="btn btn-primary d-flex align-items-" id="newoperation">New operation</button>',
+		html: '<button type="button" class="btn btn-primary" id="operations">My operations</button>',
 		showConfirmButton: false,
 	})
 }, false);
@@ -261,7 +273,6 @@ function toTable() {
 	currentUser = username;
 	golos.api.getAccountHistory(currentUser, -1, 100, function (err, result) {
 		//console.log(err,result);
-
 		myRecievers.push(currentUser);
 		//отсеивание валидных транзакций
 		//если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
@@ -270,7 +281,7 @@ function toTable() {
 			if (item[1].op[0] == "transfer" &&
 				item[1].op[1].memo.length > 100 &&
 				item[1].op[1].from == currentUser &&
-                item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
+				item[1].trx_id != '126c199cb03fb46fd38783d991934d549f9fc94a'
 			) {
 
 				console.log(item);
@@ -304,192 +315,229 @@ document.getElementById('visual').addEventListener('click', function () {
 var w = window.innerWidth;
 var h = window.innerHeight;
 var svg = d3.select("svg")
-.attr('width',w)
-.attr('height',h)
-function redrawLines(data){
-    var line = svg.selectAll("line")
-    .data(data, function(d){ return d; });
+	.attr('width', w)
+	.attr('height', h)
 
-    line.enter().append("line")
-    .attr("x1", function(d){ return getCoord(d.from)[0];})
-    .attr("y1", function(d){ return getCoord(d.from)[1];})
-    .attr("x2", function(d){ return getCoord(d.to)[0];})
-    .attr("y2", function(d){ return getCoord(d.to)[1];})
-    .attr("stroke",function(d){
-        return getTransactionColor(getTypeOfCirc(getCircById(d.from).name),getTypeOfCirc(getCircById(d.to).name));})
-    .attr("stroke-width",5)
-    .attr("data-toggle","tooltip")
-    .attr("data-placement","right")
-    .attr("data-html","true")
-	.attr("data-hash",function(d){return d.hash;})
-    .on('mouseenter',function(d){
-        $('#'+d.from).tooltip('show');
-        $('#'+d.to).tooltip('show');
-    })
-    .on('mouseout',function(d){
-        $('#'+d.from).tooltip('hide');
-        $('#'+d.to).tooltip('hide');
-    })
-    .attr("title",function(d){return '<p>'+getCircById(d.from).name+' -> '+getCircById(d.to).name+'</p><p> tokens: '+d.tokens+'</p><p>'+d.moreinfo+'</p>' });
-    
-    line.exit().remove();
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
+function redrawLines(data) {
+	var line = svg.selectAll("line")
+		.data(data, function (d) {
+			return d;
+		});
+
+	line.enter().append("line")
+		.attr("x1", function (d) {
+			return getCoord(d.from)[0];
+		})
+		.attr("y1", function (d) {
+			return getCoord(d.from)[1];
+		})
+		.attr("x2", function (d) {
+			return getCoord(d.to)[0];
+		})
+		.attr("y2", function (d) {
+			return getCoord(d.to)[1];
+		})
+		.attr("stroke", function (d) {
+			return getTransactionColor(getTypeOfCirc(getCircById(d.from).name), getTypeOfCirc(getCircById(d.to).name));
+		})
+		.attr("stroke-width", 5)
+		.attr("data-toggle", "tooltip")
+		.attr("data-placement", "right")
+		.attr("data-html", "true")
+		.attr("data-hash", function (d) {
+			return d.hash;
+		})
+		.on('mouseenter', function (d) {
+			$('#' + d.from).tooltip('show');
+			$('#' + d.to).tooltip('show');
+		})
+		.on('mouseout', function (d) {
+			$('#' + d.from).tooltip('hide');
+			$('#' + d.to).tooltip('hide');
+		})
+		.attr("title", function (d) {
+			return '<p>' + getCircById(d.from).name + ' -> ' + getCircById(d.to).name + '</p><p> tokens: ' + d.tokens + '</p><p>' + d.moreinfo + '</p>'
+		});
+
+	line.exit().remove();
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 }
-function redrawCircs(data){
-    var circle = svg.selectAll("circle")
-    .data(data, function(d) { return d; });
-    
-    circle.enter().append("circle")
-        .attr("cy", function(d){return d.y;})
-        .attr("cx", function(d){return d.x;})
-        .attr("r", function(d){return Number.parseInt(d.balance)/50;})
-        .attr("id",function(d){return d.ID;})
-        .attr("fill", function(d){return getAccountColor(d.type);})
-        .attr("data-toggle","tooltip")
-        .attr("data-placement","left")
-        .attr("data-html","true")
-        //.attr("title",function(d){return '<p>'+d.type+'</p><p>'+d.name+'<p></p>'+d.description.substr(0,150)+'...</p>';});
-        .attr("title",function(d){return '<p>'+d.type+'</p><p>'+d.name+'<p></p>balance: '+d.balance+'</p>';})
-    ;
-    circle.exit().remove();
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
- }
+
+function redrawCircs(data) {
+	var circle = svg.selectAll("circle")
+		.data(data, function (d) {
+			return d;
+		});
+
+	circle.enter().append("circle")
+		.attr("cy", function (d) {
+			return d.y;
+		})
+		.attr("cx", function (d) {
+			return d.x;
+		})
+		.attr("r", function (d) {
+			return Number.parseInt(d.balance) / 50;
+		})
+		.attr("id", function (d) {
+			return d.ID;
+		})
+		.attr("fill", function (d) {
+			return getAccountColor(d.type);
+		})
+		.attr("data-toggle", "tooltip")
+		.attr("data-placement", "left")
+		.attr("data-html", "true")
+		//.attr("title",function(d){return '<p>'+d.type+'</p><p>'+d.name+'<p></p>'+d.description.substr(0,150)+'...</p>';});
+		.attr("title", function (d) {
+			return '<p>' + d.type + '</p><p>' + d.name + '<p></p>balance: ' + d.balance + '</p>';
+		});
+	circle.exit().remove();
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+}
 //SVG------------------------------------------    
-    
+
 //DATA-----------------------------------------
 var circs = [];
 var lines = [];
 
-function visualize(names){
-    circs =[];
-    lines=[];
-    golos.api.getAccounts(names, function(err, result){
-    
-        console.log(result);
-        result.forEach(function(item,i){
-            var circ = new Object();
-            circ.x = w/3.5 + 200*Math.cos(i*2*Math.PI/names.length);
-            circ.y = h/2 + 200*Math.sin(i*2*Math.PI/names.length);
-            circ.ID = i;
-            circ.Id = item.id;
-            circ.balance = item.balance;
-            circ.permName = item.name;
-            let info = JSON.parse( item.json_metadata);
-            circ.name = info.name;
-            circ.type = info.type;
-            circ.description = info.description;
-            circ.img = info.img;
-            circs.push(circ);
-        });
-    
-    //искать всевозможные транзакции между существующими участниками
-    //цикл по именам
-    names.forEach(function(itemName){
-        lines = [];
-        //все транзакции для текущего имени
-        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
-            //console.log(err, result);
-            result.forEach(function(item){
-                
-                //console.log(item);
-                if(item[1].op[0]=="transfer" 
-                   && item[1].op[1].memo.length>100
-                   && item[1].op[1].from == itemName
-                   && item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
-                ){
-                    console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
-                    let line = new Object();
-                    let info = JSON.parse(item[1].op[1].memo);
-                    line.from = getCircByName(info.from).ID;
-                    info.to = info.to.replace(' d','');
-                    if(getCircByName(info.to)==null){
-                        names.push(info.to);
-                        visualize(names);
-                    }
-                    line.to = getCircByName(info.to).ID;
-                    line.hash = item[1].trx_id;
-                    line.moreinfo = info.moreinfo;
-                    line.tokens = info.tokens;
-                    let flag = true;
-                    lines.forEach(function(item){
-                        if(item==line) flag=false;    
-                    });
-                    if(flag=true){
-                        lines.push(line);
-                    }
-                    
-                    //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
-                }
-            });
-            console.log('lines: '+lines);
-            redrawLines(lines);
-            //redrawCircs(circs);
-        });
-        
-    });
-    //console.log('circs: '+circs);
-    redrawCircs(circs);
-});//end of names cycle
-}//end of visualize
-    
-    
-function getCoord(id){
-                let thisCirc = getCircById(id);
-                return [thisCirc.x,thisCirc.y];
-            }  
-function getCircById(id){
-                for(i=0;i<circs.length;i++){
-                    if(circs[i].ID == id){
-                        return circs[i];
-                    }
-                }
-                return null;
-            }
-function getCircByName(targetName){
-    for(let i=0;i<circs.length;i++){
-        if(circs[i].permName == targetName){
-            return circs[i];
-        }
-    }
-    return null;
+function visualize(names) {
+	circs = [];
+	lines = [];
+	golos.api.getAccounts(names, function (err, result) {
+		console.log(result);
+		result.forEach(function (item, i) {
+			var circ = new Object();
+			circ.x = w / 3.5 + 200 * Math.cos(i * 2 * Math.PI / names.length);
+			circ.y = h / 2 + 200 * Math.sin(i * 2 * Math.PI / names.length);
+			circ.ID = i;
+			circ.Id = item.id;
+			circ.balance = item.balance;
+			circ.permName = item.name;
+			let info = JSON.parse(item.json_metadata);
+			circ.name = info.name;
+			circ.type = info.type;
+			circ.description = info.description;
+			circ.img = info.img;
+			circs.push(circ);
+		});
+
+		//искать всевозможные транзакции между существующими участниками
+		//цикл по именам
+		names.forEach(function (itemName) {
+			lines = [];
+			//все транзакции для текущего имени
+			golos.api.getAccountHistory(itemName, -1, 100, function (err, result) {
+				//console.log(err, result);
+				result.forEach(function (item) {
+
+					//console.log(item);
+					if (item[1].op[0] == "transfer" &&
+						item[1].op[1].memo.length > 100 &&
+						item[1].op[1].from == itemName &&
+						item[1].trx_id != '126c199cb03fb46fd38783d991934d549f9fc94a'
+					) {
+						console.log('from: ' + item[1].op[1].from + ' to: ' + item[1].op[1].to + ' json: ' + item[1].op[1].memo);
+						let line = new Object();
+						let info = JSON.parse(item[1].op[1].memo);
+						line.from = getCircByName(info.from).ID;
+						info.to = info.to.replace(' d', '');
+						if (getCircByName(info.to) == null) {
+							names.push(info.to);
+							visualize(names);
+						}
+						line.to = getCircByName(info.to).ID;
+						line.hash = item[1].trx_id;
+						line.moreinfo = info.moreinfo;
+						line.tokens = info.tokens;
+						let flag = true;
+						lines.forEach(function (item) {
+							if (item == line) flag = false;
+						});
+						if (flag = true) {
+							lines.push(line);
+						}
+
+						//console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
+					}
+				});
+				console.log('lines: ' + lines);
+				redrawLines(lines);
+				//redrawCircs(circs);
+			});
+
+		});
+		//console.log('circs: '+circs);
+		redrawCircs(circs);
+	}); //end of names cycle
+} //end of visualize
+
+
+function getCoord(id) {
+	let thisCirc = getCircById(id);
+	return [thisCirc.x, thisCirc.y];
 }
-function getAccountColor(type){
-                if(type=="npo"){
-                    return "#4ad331";
-                }else if(type=="sponsor"){
-                    return "#eb2828";
-                }else if(type=="volunteer"){
-                    return "#ebf247";
-                }
-            }
-function getTransactionColor(typeFrom,typeTo){
-    if(typeFrom=="npo" && typeTo=="npo"){
-        return "#9036dd";
-    }else if(typeFrom=="volunteer" || typeTo=="volunteer"){
-        return "#2e9cbe";
-    }else if(typeFrom=="sponsor" || typeTo=="sponsor"){
-        return "#d06827";
-    }
+
+function getCircById(id) {
+	for (i = 0; i < circs.length; i++) {
+		if (circs[i].ID == id) {
+			return circs[i];
+		}
+	}
+	return null;
 }
-function showInfo(obj){
-                let blockInfo = document.getElementsByClassName('info')[0];
-                blockInfo.innerHTML = '';
-                blockInfo.innerHTML = obj.description;
-            }
-function hideInfo(){
-                let blockInfo = document.getElementsByClassName('info')[0].innerHTML='';
-            }        
-function isCircExist(targetName){
-                if(getCircByName(targetName)==null){
-                    return false;
-                }else{
-                    return true;
-                }
-            }
-function getTypeOfCirc(name){
-               return getCircByName(name).type;
-           }
+
+function getCircByName(targetName) {
+	for (let i = 0; i < circs.length; i++) {
+		if (circs[i].permName == targetName) {
+			return circs[i];
+		}
+	}
+	return null;
+}
+
+function getAccountColor(type) {
+	if (type == "npo") {
+		return "#4ad331";
+	} else if (type == "sponsor") {
+		return "#eb2828";
+	} else if (type == "volunteer") {
+		return "#ebf247";
+	}
+}
+
+function getTransactionColor(typeFrom, typeTo) {
+	if (typeFrom == "npo" && typeTo == "npo") {
+		return "#9036dd";
+	} else if (typeFrom == "volunteer" || typeTo == "volunteer") {
+		return "#2e9cbe";
+	} else if (typeFrom == "sponsor" || typeTo == "sponsor") {
+		return "#d06827";
+	}
+}
+
+function showInfo(obj) {
+	let blockInfo = document.getElementsByClassName('info')[0];
+	blockInfo.innerHTML = '';
+	blockInfo.innerHTML = obj.description;
+}
+
+function hideInfo() {
+	let blockInfo = document.getElementsByClassName('info')[0].innerHTML = '';
+}
+
+function isCircExist(targetName) {
+	if (getCircByName(targetName) == null) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function getTypeOfCirc(name) {
+	return getCircByName(name).type;
+}
