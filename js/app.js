@@ -370,17 +370,25 @@ function visualize(names){
                     line.hash = item[1].trx_id;
                     line.moreinfo = info.moreinfo;
                     line.tokens = info.tokens;
-                    lines.push(line);
+                    let flag = true;
+                    lines.forEach(function(item){
+                        if(item==line) flag=false;    
+                    });
+                    if(flag=true){
+                        lines.push(line);
+                    }
+                    
                     //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
                 }
             });
             console.log('lines: '+lines);
             redrawLines(lines);
+            redrawCircs(circs);
         });
         
     });
-    console.log('circs: '+circs);
-    redrawCircs(circs);
+    //console.log('circs: '+circs);
+    //redrawCircs(circs);
 });//end of names cycle
 }//end of visualize
     
