@@ -207,7 +207,7 @@ document.onreadystatechange = function () { // loading animation switch-off
 }
 
 
-var myTransactions = [];
+
 var myRecievers = [];
     
 document.getElementById('inTable').addEventListener('click',function(){
@@ -225,7 +225,7 @@ document.getElementById('inTable').addEventListener('click',function(){
                && item[1].op[1].memo.length>100
                && item[1].op[1].from == currentUser
             ){
-                myTransactions.push(item);
+                
                 
                 console.log(item);
                 let data = JSON.parse(item[1].op[1].memo);
@@ -251,7 +251,7 @@ document.getElementById('inTable').addEventListener('click',function(){
 });
         
 document.getElementById('visual').addEventListener('click',function(){
-    visualize(myRecievers,myTransactions);
+    visualize(myRecievers);
 });    
     
         
@@ -319,29 +319,27 @@ function redrawCircs(data){
 var circs = [];
 var lines = [];
 
-function visualize(names,transactions){
-var circs = [];
-var lines = [];
-
-golos.api.getAccounts(names, function(err, result){
+function visualize(names){
+    circs =[];
+    lines=[];
+    golos.api.getAccounts(names, function(err, result){
     
-    console.log(result);
-    result.forEach(function(item,i){
-        var circ = new Object();
-        circ.x = w/2 + 200*Math.cos(i*2*Math.PI/names.length);
-        circ.y = h/2 + 200*Math.sin(i*2*Math.PI/names.length);
-        circ.ID = i;
-        circ.Id = item.id;
-        circ.balance = item.balance;
-        circ.permName = item.name;
-        let info = JSON.parse( item.json_metadata);
-        circ.name = info.name;
-        circ.type = info.type;
-        circ.description = info.description;
-        circ.img = info.img;
-        circs.push(circ);
-        //console.log(circs);
-    });
+        console.log(result);
+        result.forEach(function(item,i){
+            var circ = new Object();
+            circ.x = w/2 + 200*Math.cos(i*2*Math.PI/names.length);
+            circ.y = h/2 + 200*Math.sin(i*2*Math.PI/names.length);
+            circ.ID = i;
+            circ.Id = item.id;
+            circ.balance = item.balance;
+            circ.permName = item.name;
+            let info = JSON.parse( item.json_metadata);
+            circ.name = info.name;
+            circ.type = info.type;
+            circ.description = info.description;
+            circ.img = info.img;
+            circs.push(circ);
+        });
     
     
     //искать всевозможные транзакции между существующими участниками
@@ -351,39 +349,34 @@ golos.api.getAccounts(names, function(err, result){
         //все транзакции для текущего имени
         golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
             //console.log(err, result);
-            console.log(itemName);
             result.forEach(function(item){
                 
                 if(item[1].op[0]=="transfer" 
                    && item[1].op[1].memo.length>100
                    && item[1].op[1].from == itemName
-                ){
-                    console.log(item[1].op[1]);
-                    console.log(item[1].op[1].from+' '+item[1].op[1].to );
-                
-                    console.log(item);
-                    if(item[1].op[1].to=='fundobra'){
-                        let line = new Object();
-                        let info = JSON.parse(item[1].op[1].memo);
-                        line.from = getCircByName(info.from).ID;
-                        info.to = info.to.replace(' d','');
-                        line.to = getCircByName(info.to).ID;
-                        line.hash = item[1].trx_id;
-                        line.moreinfo = info.moreinfo;
-                        line.tokens = info.tokens;
-                        lines.push(line);
-                        console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
-                        //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
+                ){   
+                    console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
+                    let line = new Object();
+                    let info = JSON.parse(item[1].op[1].memo);
+                    line.from = getCircByName(info.from).ID;
+                    info.to = info.to.replace(' d','');
+                    if(getCircByName(info.to)==null){
+                        names.push(info.to);
+                        visualize(names);
                     }
-                    
+                    line.to = getCircByName(info.to).ID;
+                    line.hash = item[1].trx_id;
+                    line.moreinfo = info.moreinfo;
+                    line.tokens = info.tokens;
+                    lines.push(line);
+                    //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
                 }
             });
-            //console.log('lines '+N);
+            console.log(lines);
             redrawLines(lines);
         });
         
     });
-    //console.log('circs '+N);
     console.log(circs);
     redrawCircs(circs);
 });//end of names cycle
@@ -403,10 +396,7 @@ function getCircById(id){
                 return null;
             }
 function getCircByName(targetName){
-    console.targetName;
     for(let i=0;i<circs.length;i++){
-        console.log(circs.length+' '+i);
-        //console.log(circs[i].permName+'=='+targetName);
         if(circs[i].permName == targetName){
             return circs[i];
         }
@@ -423,15 +413,14 @@ function getAccountColor(type){
                 }
             }
 function getTransactionColor(typeFrom,typeTo){
-                console.log(typeFrom+' '+typeTo);
-                if(typeFrom=="npo" && typeTo=="npo"){
-                    return "#9036dd";
-                }else if(typeFrom=="volunteer" || typeTo=="volunteer"){
-                    return "#2e9cbe";
-                }else if(typeFrom=="sponsor" || typeTo=="sponsor"){
-                    return "#d06827";
-                }
-            }
+    if(typeFrom=="npo" && typeTo=="npo"){
+        return "#9036dd";
+    }else if(typeFrom=="volunteer" || typeTo=="volunteer"){
+        return "#2e9cbe";
+    }else if(typeFrom=="sponsor" || typeTo=="sponsor"){
+        return "#d06827";
+    }
+}
 function showInfo(obj){
                 let blockInfo = document.getElementsByClassName('info')[0];
                 blockInfo.innerHTML = '';
