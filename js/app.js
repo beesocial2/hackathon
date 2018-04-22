@@ -18,6 +18,8 @@ if (wif) {
 if (username) {
 	golos.api.getAccounts([username], function (err, result) {
 		console.log('accType = ', JSON.parse(result[0].json_metadata).type);
+		document.querySelector('#avatar').querySelector('img').src = JSON.parse(result[0].json_metadata).img;
+		toTable();
 	});
 }
 
@@ -192,9 +194,8 @@ document.getElementById('avatar').addEventListener('click', () => {
 	swal({
 		position: 'top-end',
 		title: '<i>Cabinet</i>',
-  html:
-    '<button type="button" class="btn btn-primary" id="operations">My operations</button>' +
-    '<button type="button" class="btn btn-primary d-flex align-items-" id="newoperation">New operation</button>',
+		html: '<button type="button" class="btn btn-primary" id="operations">My operations</button>' +
+			'<button type="button" class="btn btn-primary d-flex align-items-" id="newoperation">New operation</button>',
 		showConfirmButton: false,
 	})
 }, false);
@@ -206,56 +207,50 @@ document.onreadystatechange = function () { // loading animation switch-off
 	}
 }
 
-
-
 var myRecievers = [];
-    
-document.getElementById('inTable').addEventListener('click',function(){
-    currentUser = 'imaguru';
-    
-    golos.api.getAccountHistory(currentUser, -1, 100, function(err, result) {
-        //console.log(err,result);
-        
-        myRecievers.push(currentUser);
-        //отсеивание валидных транзакций
-        //если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
-        result.forEach(function(item,i){
-            //console.log(item[1]);
-            if(item[1].op[0]=="transfer" 
-               && item[1].op[1].memo.length>100
-               && item[1].op[1].from == currentUser
-               && item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
-            ){
-                
-                
-                console.log(item);
-                let data = JSON.parse(item[1].op[1].memo);
-                let row = document.createElement('tr');
-                row.innerHTML = "<td>"+item[1].trx_id+"</td><td>"+item[1].op[1].from+"</td><td>"+item[1].op[1].to+"</td><td>"+data.tokens+"</td><td>"+item[1].timestamp+"</td><td>"+data.moreinfo+"</td>";
-                document.getElementsByTagName('tbody')[0].appendChild(row);
-                
-                
-                let flag = true; 
-                myRecievers.forEach(function(itemName){
-                    if(itemName==item[1].op[1].to){
-                        flag=false;
-                    }
-                });
-                if(flag==true){
-                    myRecievers.push(item[1].op[1].to);    
-                }
-            }
-        });
-        //console.log(myRecievers);
-    });
+
+function toTable() {
+	currentUser = username;
+	golos.api.getAccountHistory(currentUser, -1, 100, function (err, result) {
+		//console.log(err,result);
+
+		myRecievers.push(currentUser);
+		//отсеивание валидных транзакций
+		//если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
+		result.forEach(function (item, i) {
+			//console.log(item[1]);
+			if (item[1].op[0] == "transfer" &&
+				item[1].op[1].memo.length > 100 &&
+				item[1].op[1].from == currentUser
+			) {
+
+				console.log(item);
+				let data = JSON.parse(item[1].op[1].memo);
+				let row = document.createElement('tr');
+				row.innerHTML = "<td>" + item[1].trx_id + "</td><td>" + item[1].op[1].from + "</td><td>" + item[1].op[1].to + "</td><td>" + data.tokens + "</td><td>" + item[1].timestamp + "</td><td>" + data.moreinfo + "</td>";
+				document.getElementsByTagName('tbody')[0].appendChild(row);
+
+
+				let flag = true;
+				myRecievers.forEach(function (itemName) {
+					if (itemName == item[1].op[1].to) {
+						flag = false;
+					}
+				});
+				if (flag == true) {
+					myRecievers.push(item[1].op[1].to);
+				}
+			}
+		});
+		//console.log(myTransactions);
+		//console.log(myRecievers);
+	});
+};
+
+document.getElementById('visual').addEventListener('click', function () {
+	visualize(myRecievers);
 });
-        
-document.getElementById('visual').addEventListener('click',function(){
-    visualize(myRecievers);
-});    
-    
-        
-        
+
 //visualize.js--------------------------------
 var w = window.innerWidth;
 var h = window.innerHeight;
@@ -449,9 +444,3 @@ function isCircExist(targetName){
 function getTypeOfCirc(name){
                return getCircByName(name).type;
            }
-            
-
-    
-    
-
-
