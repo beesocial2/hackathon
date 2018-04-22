@@ -191,8 +191,11 @@ document.getElementById('avatar').addEventListener('click', () => {
 	console.log('<f> avatar click');
 	swal({
 		position: 'top-end',
-		type: 'success',
-		title: 'Your work has been saved',
+		title: '<i>Cabinet</i>',
+  html:
+    '<button type="button" class="btn btn-primary" id="operations">My operations</button>' +
+    '<button type="button" class="btn btn-primary d-flex align-items-" id="newoperation">New operation</button>',
+		showConfirmButton: false,
 	})
 }, false);
 
