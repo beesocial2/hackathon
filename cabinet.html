@@ -43,12 +43,55 @@
 			<a href="https://github.com/antonshwab/beesocial"></a>
 		</div>
 	</nav>
-  
+      <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">hash</th>
+          <th scope="col">From</th>
+          <th scope="col">To</th>
+          <th scope="col">Tokens</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+       
+        <!--<tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td>@mdo</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>Jacob</td>
+          <td>Thornton</td>
+          <td>@fat</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td>Larry</td>
+          <td>the Bird</td>
+          <td>@twitter</td>
+        </tr>-->
+      </tbody>
+    </table>
       
    
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/golos-js@0.6.1/dist/golos.min.js"></script>
+    
+    <script>
+       golos.config.set('websocket', 'wss://ws.testnet.golos.io');
+       golos.config.set('address_prefix', 'GLS');
+       golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
+       
+       $(document).ready(function(){
+           
+           
+           
+       });
   </body>
 </html>
 
