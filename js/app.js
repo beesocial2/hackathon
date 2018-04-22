@@ -221,7 +221,8 @@ function toTable() {
 			//console.log(item[1]);
 			if (item[1].op[0] == "transfer" &&
 				item[1].op[1].memo.length > 100 &&
-				item[1].op[1].from == currentUser
+				item[1].op[1].from == currentUser &&
+                item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
 			) {
 
 				console.log(item);
