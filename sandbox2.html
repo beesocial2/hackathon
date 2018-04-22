@@ -40,10 +40,21 @@
                  .attr("y1", function(d){ return getCoord(d.from)[1];})
                  .attr("x2", function(d){ return getCoord(d.to)[0];})
                  .attr("y2", function(d){ return getCoord(d.to)[1];})
-                 .attr("stroke",function(d){return getTransactionColor(d.type);})
+                 .attr("stroke",function(d){
+                    return getTransactionColor(getTypeOfCirc(getCircById(d.from).name),getTypeOfCirc(getCircById(d.to).name));})
+                 .attr("stroke-width",5)
                  .attr("data-toggle","tooltip")
                  .attr("data-placement","right")
-                 .attr("title",function(d){return d.description});
+                 .attr("data-html","true")
+                 .on('mouseenter',function(d){
+                    $('#'+d.from).tooltip('show');
+                    $('#'+d.to).tooltip('show');
+                 })
+                 .on('mouseout',function(d){
+                    $('#'+d.from).tooltip('hide');
+                    $('#'+d.to).tooltip('hide');
+                 })
+                 .attr("title",function(d){return '<p>'+getCircById(d.from).name+' -> '+getCircById(d.to).name+'</p><p> tokens: '+d.tokens+'</p><p>'+d.moreinfo+'</p>' });
                 
                 line.exit().remove();
                 $(function () {
@@ -58,13 +69,13 @@
                 circle.enter().append("circle")
                      .attr("cy", function(d){return d.y;})
                      .attr("cx", function(d){return d.x;})
-                     .attr("r", 10)
+                     .attr("r", function(d){return Number.parseInt(d.balance)/50;})
                      .attr("id",function(d){return d.ID;})
                      .attr("fill", function(d){return getAccountColor(d.type);})
                      .attr("data-toggle","tooltip")
-                     .attr("data-placement","right")
+                     .attr("data-placement","left")
                      .attr("data-html","true")
-                     .attr("title",function(d){return '<p>'+d.type+'</p><p>'+d.name+'<p></p>'+d.description+'</p>';});
+                     .attr("title",function(d){return '<p>'+d.type+'</p><p>'+d.name+'<p></p>'+d.description.substr(0,150)+'...</p>';});
                 ;
                 circle.exit().remove();
                 $(function () {
@@ -78,94 +89,75 @@
        //DATA-----------------------------------------
             var circs = [];
             var lines = [];
-            var names = ['priorbank','imaguru','monkeyfood','ecotheatre','greenetwork','botcube','fundobra','maria-knop','anton-shvab'];
+            var names = ['botcube','monkeyfood','priorbank','imaguru','ecotheatre','greenetwork','botcube','fundobra','maria-knop','anton-shvab'];
             var N=1;
             window.addEventListener('click',function(){
                 
                 circs = [];
                 lines = [];
-                    var user;
-                    var currentNamesArray = names.slice(0,N);
-                    golos.api.getAccounts(currentNamesArray, function(err, result) {
-                        //console.log(result);
-                        result.forEach(function(item,i){
-                            
-                            var circ = new Object();
-                            circ.x = window.innerWidth/2 + 200*Math.cos(i*2*Math.PI/N);
-                            circ.y = window.innerHeight/2 + 200*Math.sin(i*2*Math.PI/N);
-                            circ.ID = i;
-                            circ.Id = item.id;
-                            circ.permName = item.name;
-                            let info = JSON.parse( item.json_metadata);
-                            circ.name = info.name;
-                            circ.type = info.type;
-                            circ.description = info.description;
-                            circ.img = info.img;
-                            circs.push(circ);
-                            //console.log(circs);
-                        });
-                        redrawCircs(circs);
-                        
-                        /*if( N==3){
-                            console.log('lines');
-                            
-                            //------lines-------------------------
-                            /*var line = new Object();
-                            let jsonMetadata1;
-                            /*if(N==2){
-                                jsonMetadata1 = '{"from":"priorbank","to":"imaguru","type":"project","description":"Hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
-                            }*/
-                            /*if(N==3){
-                                jsonMetadata1 = '{"from":"imaguru","to":"monkeyfood","type":"project","description":"Hackathon Social Weekend","tokens":"1000","moreinfo":"24-25 February, Hackathon Social Weekend "}';
-                            }
-                            info = JSON.parse(jsonMetadata1);
-                            
-                            line.from = getCircByName(info.from).ID;
-                            line.to = getCircByName(info.to).ID;
-                            line.description = info.description;
-                            line.type = info.type;
-                            lines.push(line);
-                            redrawLines(lines);
-                        }*/
-                        //искать всевозможные транзакции между существующими участниками
-                        //цикл по именам
-                        names.slice(0,N).forEach(function(itemName){
-                            
-                            //все транзакции для текущего имени
-                            golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
-                                //console.log(err, result);
-                                
-                                //отсеивание валидных транзакций
-                                //если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
-                                result.forEach(function(item){
-                                    //console.log(item[1]);
-                                    if(item[1].op[0]=="transfer" 
-                                       && item[1].op[1].memo.length>100 
-                                       && isCircExist(item[1].op[1].to)
-                                       && item[1].op[1].from == itemName
-                                    ){
-                                        //console.log(item);
-                                        
-                                        let line = new Object();
-                                        let info = JSON.parse(item[1].op[1].memo);
-                                        line.from = getCircByName(info.from).ID;
-                                        
-                                        info.to = info.to.replace(' d','');
-                                        
-                                        line.to = getCircByName(info.to).ID;
-                                        line.description = info.description;
-                                        line.type = info.type;
-                                        lines.push(line);
-                                        console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
-                                        //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));
-                                    }
-                                });
-                                //console.log(result[17][1].op);
-                            });
-                        });
-                        
-                        N++;
+                //console.log(lines);
+                var user;
+                var currentNamesArray = names.slice(0,N);
+                golos.api.getAccounts(currentNamesArray, function(err, result) {
+                    //console.log(result);
+                    result.forEach(function(item,i){
+                        var circ = new Object();
+                        circ.x = window.innerWidth/2 + 200*Math.cos(i*2*Math.PI/N);
+                        circ.y = window.innerHeight/2 + 200*Math.sin(i*2*Math.PI/N);
+                        circ.ID = i;
+                        circ.Id = item.id;
+                        circ.balance = item.balance;
+                        circ.permName = item.name;
+                        let info = JSON.parse( item.json_metadata);
+                        circ.name = info.name;
+                        circ.type = info.type;
+                        circ.description = info.description;
+                        circ.img = info.img;
+                        circs.push(circ);
+                        //console.log(circs);
                     });
+                    
+                    
+                    //искать всевозможные транзакции между существующими участниками
+                    //цикл по именам
+                    names.slice(0,N).forEach(function(itemName){
+                        lines = [];
+                        //все транзакции для текущего имени
+                        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
+                            //console.log(err, result);
+                            
+                            //отсеивание валидных транзакций
+                            //если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
+                            result.forEach(function(item){
+                                //console.log(item[1]);
+                                if(item[1].op[0]=="transfer" 
+                                   && item[1].op[1].memo.length>100 
+                                   && isCircExist(item[1].op[1].to)
+                                   && item[1].op[1].from == itemName
+                                ){
+                                    //console.log(item);
+                                    
+                                    let line = new Object();
+                                    let info = JSON.parse(item[1].op[1].memo);
+                                    line.from = getCircByName(info.from).ID;
+                                    info.to = info.to.replace(' d','');
+                                    line.to = getCircByName(info.to).ID;
+                                    line.moreinfo = info.moreinfo;
+                                    line.tokens = info.tokens;
+                                    lines.push(line);
+                                    console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
+                                    //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));
+                                }
+                            });
+                            console.log('lines '+N);
+                            redrawLines(lines);
+                        });
+                        
+                    });
+                    console.log('circs '+N);
+                    redrawCircs(circs);
+                    N++;
+                });
                 
             });
             
@@ -184,9 +176,7 @@
             }
            function getCircByName(targetName){
                 for(i=0;i<circs.length;i++){
-                    //console.log(circs[i].permName+' '+targetName);
                     if(circs[i].permName == targetName){
-                        //console.log('here');
                         return circs[i];
                     }
                 }
@@ -201,11 +191,14 @@
                     return "#ebf247";
                 }
             }
-            function getTransactionColor(type){
-                if(type=="resource"){
+            function getTransactionColor(typeFrom,typeTo){
+                console.log(typeFrom+' '+typeTo);
+                if(typeFrom=="npo" && typeTo=="npo"){
                     return "#9036dd";
-                }else if(type=="project"){
+                }else if(typeFrom=="volunteer" || typeTo=="volunteer"){
                     return "#2e9cbe";
+                }else if(typeFrom=="sponsor" || typeTo=="sponsor"){
+                    return "#d06827";
                 }
             }
             function showInfo(obj){
