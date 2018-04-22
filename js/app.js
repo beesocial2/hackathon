@@ -317,10 +317,9 @@ var circs = [];
 var lines = [];
 
 function visualize(names){
-    circs =[];
-    lines=[];
+    circs = [];
+    lines = [];
     golos.api.getAccounts(names, function(err, result){
-        console.log(result);
         result.forEach(function(item,i){
             var circ = new Object();
             circ.x = w/3.5 + 200*Math.cos(i*2*Math.PI/names.length);
@@ -335,61 +334,65 @@ function visualize(names){
             circ.description = info.description;
             circ.img = info.img;
             circs.push(circ);
+            
         });
-    console.log('size: ',circs.length);
-    
     
     //искать всевозможные транзакции между существующими участниками
     //цикл по именам
+        lines=[];
     names.forEach(function(itemName){
-        lines = [];
-        //все транзакции для текущего имени
-        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
-            //console.log(err, result);
-            result.forEach(function(item){
-                
-                //console.log(item);
-                if(item[1].op[0]=="transfer" 
-                   && item[1].op[1].memo.length>100
-                   && item[1].op[1].from == itemName
-                   && item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
-                ){
-                    console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
-                    let line = new Object();
-                    let info = JSON.parse(item[1].op[1].memo);
-                    console.log(getCircByName(info.from));
-                    line.from = getCircByName(info.from).ID;
-                    if(getCircByName(info.to)==null){
-                        names.push(info.to);
-                        visualize(names);
-                    }
-                    line.to = getCircByName(info.to).ID;
-                    line.hash = item[1].trx_id;
-                    line.moreinfo = info.moreinfo;
-                    line.tokens = info.tokens;
-                    let flag = true;
-                    lines.forEach(function(item){
-                        if(item==line) flag=false;    
-                    });
-                    if(flag=true){
-                        lines.push(line);
-                    }
-                    
-                    //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
-                }
-            });
-            console.log('lines: '+lines);
-            redrawLines(lines);
-            lines = [];
-            //redrawCircs(circs);
-        });
         
+        //все транзакции для текущего имени
+        getAccountHistory(itemName,names);
     });
-    //console.log('circs: '+circs);
     redrawCircs(circs);
-    circs = [];
 });//end of names cycle
 }//end of visualize
+
+function getAccountHistory(itemName,names){
+    
+    golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
+        
+        
+        result.forEach(function(item){
+            
+            if(item[1].op[0]=="transfer" 
+               && item[1].op[1].memo.length>100
+               && item[1].op[1].from == itemName
+               && item[1].trx_id !='126c199cb03fb46fd38783d991934d549f9fc94a'
+            ){
+                console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
+                let line = new Object();
+                let info = JSON.parse(item[1].op[1].memo);
+                line.from = getCircByName(info.from).ID;
+                if(getCircByName(info.to)==null){
+                    names.push(info.to);
+                    visualize(names);
+                }
+                line.to = getCircByName(info.to).ID;
+                line.hash = item[1].trx_id;
+                line.moreinfo = info.moreinfo;
+                line.tokens = info.tokens;
+                let flag = true;
+                lines.forEach(function(item){
+                    if(item==line) flag=false;    
+                });
+                if(flag=true){
+                    lines.push(line);
+                }
+                
+                //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));    
+            }
+        });
+        redrawLines(lines);
+        
+        //redrawCircs(circs);
+    });    
+    
+}
+
+            
+    
     
     
 function getCoord(id){
