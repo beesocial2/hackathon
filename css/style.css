@@ -92,3 +92,8 @@ nav.navbar{
     -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
     transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
 }
+
+
+circle,line{
+    box-shadow: 1px 1px 1px rgba(0,0,0,.3);
+}
