@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <script src="http://d3js.org/d3.v2.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/golos-js@0.6.1/dist/golos.min.js"></script>
+    <script src="js/blockchainData.js"></script>
     <style type="text/css">
         body {
           font: 10px sans-serif;
@@ -70,13 +71,12 @@
   
   
    
-   <script src="blockchain.js"></script>
+   
    <script>
        
         var width = document.getElementsByClassName('pic')[0].clientWidth - 10;
         var height = 600;
-        console.log(width);
-       console.log(height);
+        
        
         var body = d3.select("section.pic");
         var vis = body.append("svg")
@@ -84,14 +84,24 @@
             .attr("height", height);
        
     </script>
-   <script type="text/javascript" src="visualize.js" defer></script>
+   <script type="text/javascript" src="js/visualize.js" defer></script>
     <script type="text/javascript">
         
+        var jsonData='';
+        window.addEventListener('load', function() {
+            
+            getJsonData('beesocial',function(result){
+                jsonData = result;
+                console.log(jsonData);
+                init(jsonData);
+            });
+            
+        });
         
         
         //var json_metadata = '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1},{"name":"Myriel1","group":2}],"links":[{"source":2,"target":0,"value":10},{"source":0,"target":2,"value":100}]}';
         //var json_metadata = '{"nodes":[{"name":"Myriel","group":1}],"links":[]}';
-        var jsonArray = [ '{"nodes":[{"name":"Myriel","group":1}],"links":[]}',
+        /*var jsonArray = [ '{"nodes":[{"name":"Myriel","group":1}],"links":[]}',
                          '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":2}],"links":[]}',
                         '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":2}],"links":[{"source":1,"target":0,"value":10}]}'
                          ];
@@ -106,7 +116,7 @@
                 i++;
             },2000);
             
-        });
+        });*/
         
     </script>
     

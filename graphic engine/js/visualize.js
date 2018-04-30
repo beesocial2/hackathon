@@ -139,7 +139,7 @@ function drawCluster(d) {
 
 // --------------------------------------------------------
 
-var init = function () {
+var init = function (jsonData) {
     
     //очистка контейнера svg здесь - удалить все три группы
     //третья строчка на всякий случай - переселект чтобы удалить
@@ -148,33 +148,31 @@ var init = function () {
     s = s.remove();
     //s = d3.selectAll('svg g');
     
+    data = JSON.parse(jsonData);
+    console.log(data);
+   
+    for (var i=0; i<data.links.length; ++i) {
+        o = data.links[i];
+        console.log(o);
+        console.log(data.nodes[o.source]);
+        console.log(data.nodes[o.target]);
+        o.source = data.nodes[o.source];
+ 
+        o.target = data.nodes[o.target];
+        console.log(o);
+    }
+    hullg = vis.append("g");
+    linkg = vis.append("g");
+    nodeg = vis.append("g");
+    //init();
+    vis.attr("opacity", 1e-6)
+        .transition()
+        .duration(1)
+        .attr("opacity", 1);
     
-    d3.json("", function(json) {
-        data = JSON.parse(json_metadata);
-        console.log(data);
-    
-        for (var i=0; i<data.links.length; ++i) {
-            o = data.links[i];
-            console.log(o);
-            console.log(data.nodes[o.source]);
-            console.log(data.nodes[o.target]);
-            o.source = data.nodes[o.source];
-     
-            o.target = data.nodes[o.target];
-            console.log(o);
-        }
-
-        hullg = vis.append("g");
-        linkg = vis.append("g");
-        nodeg = vis.append("g");
-
-        //init();
-
-        vis.attr("opacity", 1e-6)
-            .transition()
-            .duration(1)
-            .attr("opacity", 1);
-    });
+    /*d3.json("", function(json) {
+        
+    });*/
     
     if (force) force.stop();
 
@@ -246,7 +244,7 @@ var init = function () {
         .on("click", function(d) {
             console.log("node click", d, arguments, this, expand[d.group]);
             expand[d.group] = !expand[d.group];
-            init();
+            init(jsonData);
         });
 
     node.call(force.drag);
