@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clustered Network</title>
+    <script src="http://d3js.org/d3.v2.js"></script>
+    
+
+    <style type="text/css">
+svg {
+  border: 1px solid #ccc;
+}
+body {
+  font: 10px sans-serif;
+}
+circle.node {
+  fill: lightsteelblue;
+  stroke: #555;
+  stroke-width: 3px;
+}
+circle.leaf {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+path.hull {
+  fill: lightsteelblue;
+  fill-opacity: 0.3;
+}
+line.link {
+  stroke: #333;
+  stroke-opacity: 0.5;
+  pointer-events: none;
+}
+    </style>
+  </head>
+  
+  
+  <body>
+   
+   <script type="text/javascript" src="visualize.js" defer></script>
+    <script type="text/javascript">
+        
+        //var json_metadata = '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1},{"name":"Myriel1","group":2}],"links":[{"source":2,"target":0,"value":10},{"source":0,"target":2,"value":100}]}';
+        //var json_metadata = '{"nodes":[{"name":"Myriel","group":1}],"links":[]}';
+        var jsonArray = [ '{"nodes":[{"name":"Myriel","group":1}],"links":[]}',
+                         '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":2}],"links":[]}',
+                        '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":2}],"links":[{"source":1,"target":0,"value":10}]}'
+                         ];
+        var json_metadata = '';
+        var i=0;
+        window.addEventListener('load', function() {
+            var x = setInterval(function(){
+                
+                json_metadata = jsonArray[i];
+                init();
+                i++;
+            },2000);
+            
+        });
+        
+    </script>
+    
+  </body>
+</html>
