@@ -1,6 +1,7 @@
-var width = 960,     // svg width
-    height = 600,     // svg height
-    dr = 4,      // default point radius
+//var width = ,     // svg width
+    //height = 600,     // svg height
+
+var dr = 4,      // default point radius
     off = 10,    // cluster hull offset
     expand = {}, // expanded clusters
     data, net, force, hullg, hull, linkg, link, nodeg, node;
@@ -133,16 +134,10 @@ function convexHulls(nodes, index, offset) {
 }
 
 function drawCluster(d) {
-  return curve(d.path); // 0.8
+    return curve(d.path); // 0.8
 }
 
 // --------------------------------------------------------
-var body = d3.select("body");
-
-var vis = body.append("svg")
-   .attr("width", width)
-   .attr("height", height);
-
 
 var init = function () {
     

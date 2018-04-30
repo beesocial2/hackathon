@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clustered Network</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="http://d3js.org/d3.v2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/golos-js@0.6.1/dist/golos.min.js"></script>
+    <style type="text/css">
+        body {
+          font: 10px sans-serif;
+        }
+        circle.node {
+          fill: lightsteelblue;
+          stroke: #555;
+          stroke-width: 3px;
+        }
+        circle.leaf {
+          stroke: #fff;
+          stroke-width: 1.5px;
+        }
+        path.hull {
+          fill: lightsteelblue;
+          fill-opacity: 0.3;
+        }
+        line.link {
+          stroke: #333;
+          stroke-opacity: 0.5;
+          pointer-events: none;
+        }
+        .wrapper{
+            display: flex;
+            justify-content: center;
+        }
+        .pic, .descr{
+            padding: 5px;
+        }
+        .pic, .wrapper h5{
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .pic{
+            width: 70%;
+        }
+        .descr{
+            width: 30%;
+        }
+        .descr>div{
+            height: 600px;
+        }
+        svg, .descr>div{
+          border: 1px solid #ccc;
+        }
+    </style>
+  </head>
+  
+  
+  <body>
+      <div class="wrapper">
+          <section class="pic">
+              <h5>graph</h5>
+          </section>
+          <section class="descr">
+              <h5>description</h5>
+              <div>
+                  
+              </div>
+          </section>
+      </div>
+  
+  
+  
+   
+   <script src="blockchain.js"></script>
+   <script>
+       
+        var width = document.getElementsByClassName('pic')[0].clientWidth - 10;
+        var height = 600;
+        console.log(width);
+       console.log(height);
+       
+        var body = d3.select("section.pic");
+        var vis = body.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+       
+    </script>
+   <script type="text/javascript" src="visualize.js" defer></script>
+    <script type="text/javascript">
+        
+        
+        
+        //var json_metadata = '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1},{"name":"Myriel1","group":2}],"links":[{"source":2,"target":0,"value":10},{"source":0,"target":2,"value":100}]}';
+        //var json_metadata = '{"nodes":[{"name":"Myriel","group":1}],"links":[]}';
+        var jsonArray = [ '{"nodes":[{"name":"Myriel","group":1}],"links":[]}',
+                         '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":2}],"links":[]}',
+                        '{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":2}],"links":[{"source":1,"target":0,"value":10}]}'
+                         ];
+        var json_metadata = '';
+        var i=0;
+        window.addEventListener('load', function() {
+            var x = setInterval(function(){
+                
+                json_metadata = jsonArray[i];
+                init();
+                if(i==2) clearInterval(x);
+                i++;
+            },2000);
+            
+        });
+        
+    </script>
+    
+  </body>
+</html>
