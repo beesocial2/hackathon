@@ -1,7 +1,7 @@
 //var width = ,     // svg width
     //height = 600,     // svg height
 
-var dr = 4,      // default point radius
+var dr = 8,      // default point radius
     off = 10,    // cluster hull offset
     expand = {}, // expanded clusters
     data, net, force, hullg, hull, linkg, link, nodeg, node;
@@ -28,85 +28,85 @@ function getGroup(n) { return n.group; }
 
 // constructs the network to visualize
 function network(data, prev, index, expand) {
-  expand = expand || {};
-  var gm = {},    // group map
-      nm = {},    // node map
-      lm = {},    // link map
-      gn = {},    // previous group nodes
-      gc = {},    // previous group centroids
-      nodes = [], // output nodes
-      links = []; // output links
+    expand = expand || {};
+    var gm = {},    // group map
+        nm = {},    // node map
+        lm = {},    // link map
+        gn = {},    // previous group nodes
+        gc = {},    // previous group centroids
+        nodes = [], // output nodes
+        links = []; // output links
 
-  // process previous nodes for reuse or centroid calculation
-  if (prev) {
-    prev.nodes.forEach(function(n) {
-      var i = index(n), o;
-      if (n.size > 0) {
-        gn[i] = n;
-        n.size = 0;
-      } else {
-        o = gc[i] || (gc[i] = {x:0,y:0,count:0});
-        o.x += n.x;
-        o.y += n.y;
-        o.count += 1;
-      }
-    });
-  }
+    // process previous nodes for reuse or centroid calculation
+    if (prev) {
+        prev.nodes.forEach(function(n) {
+            var i = index(n), o;
+            if (n.size > 0) {
+                gn[i] = n;
+                n.size = 0;
+            } else {
+                o = gc[i] || (gc[i] = {x:0,y:0,count:0});
+                o.x += n.x;
+                o.y += n.y;
+                o.count += 1;
+            }
+        });
+    }
 
   // determine nodes
-  for (var k=0; k<data.nodes.length; ++k) {
-    var n = data.nodes[k],
-        i = index(n),
-        l = gm[i] || (gm[i]=gn[i]) || (gm[i]={group:i, size:0, nodes:[]});
-
-    if (expand[i]) {
-      // the node should be directly visible
-      nm[n.name] = nodes.length;
-      nodes.push(n);
-      if (gn[i]) {
-        // place new nodes at cluster location (plus jitter)
-        n.x = gn[i].x + Math.random();
-        n.y = gn[i].y + Math.random();
-      }
-    } else {
-      // the node is part of a collapsed cluster
-      if (l.size == 0) {
-        // if new cluster, add to set and position at centroid of leaf nodes
-        nm[i] = nodes.length;
-        nodes.push(l);
-        if (gc[i]) {
-          l.x = gc[i].x / gc[i].count;
-          l.y = gc[i].y / gc[i].count;
+    for (var k=0; k<data.nodes.length; ++k) {
+        var n = data.nodes[k],
+            i = index(n),
+            l = gm[i] || (gm[i]=gn[i]) || (gm[i]={group:i, size:0, nodes:[]});
+        
+        if (expand[i]) {
+            // the node should be directly visible
+            nm[n.name] = nodes.length;
+            nodes.push(n);
+            if (gn[i]) {
+                // place new nodes at cluster location (plus jitter)
+                n.x = gn[i].x + Math.random();
+                n.y = gn[i].y + Math.random();
+            }
+        } else {
+            // the node is part of a collapsed cluster
+            if (l.size == 0) {
+                // if new cluster, add to set and position at centroid of leaf nodes
+                nm[i] = nodes.length;
+                nodes.push(l);
+                if (gc[i]) {
+                    l.x = gc[i].x / gc[i].count;
+                    l.y = gc[i].y / gc[i].count;
+                }
+            }
+            l.nodes.push(n);
         }
-      }
-      l.nodes.push(n);
+        // always count group size as we also use it to tweak the force graph strengths/distances
+        l.size += 1;
+        n.group_data = l;
     }
-  // always count group size as we also use it to tweak the force graph strengths/distances
-    l.size += 1;
-  n.group_data = l;
-  }
 
-  for (i in gm) { gm[i].link_count = 0; }
+    for (i in gm) { gm[i].link_count = 0; }
 
-  // determine links
-  for (k=0; k<data.links.length; ++k) {
-    var e = data.links[k],
-        u = index(e.source),
-        v = index(e.target);
-  if (u != v) {
-    gm[u].link_count++;
-    gm[v].link_count++;
-  }
-    u = expand[u] ? nm[e.source.name] : nm[u];
-    v = expand[v] ? nm[e.target.name] : nm[v];
-    var i = (u<v ? u+"|"+v : v+"|"+u),
-        l = lm[i] || (lm[i] = {source:u, target:v, size:0});
-    l.size += 1;
-  }
+    // determine links
+    for (k=0; k<data.links.length; ++k) {
+        var e = data.links[k],
+            u = index(e.source),
+            v = index(e.target);
+        if (u != v) {
+            gm[u].link_count++;
+            gm[v].link_count++;
+        }
+        u = expand[u] ? nm[e.source.name] : nm[u];
+        v = expand[v] ? nm[e.target.name] : nm[v];
+        var i = (u<v ? u+"|"+v : v+"|"+u),
+            l = lm[i] || (lm[i] = {source:u, target:v, size:0});
+        l.size += 1;
+    }
     
-  for (i in lm) { links.push(lm[i]); }
-
-  return {nodes: nodes, links: links};
+    for (i in lm) { links.push(lm[i]); }
+    console.log(nodes);
+    return {nodes: nodes, links: links};
 }
 
 function convexHulls(nodes, index, offset) {
@@ -193,7 +193,7 @@ var init = function (jsonData) {
         // nodes of another group or other group node or between two group nodes.
         //
         // The latter was done to keep the single-link groups ('blue', rose, ...) close.
-        return 30 +
+        return 150 +
         Math.min(20 * Math.min((n1.size || (n1.group != n2.group ? n1.group_data.size : 0)),
                              (n2.size || (n1.group != n2.group ? n2.group_data.size : 0))),
            -30 +
@@ -219,7 +219,7 @@ var init = function (jsonData) {
         .style("fill", function(d) { return fill(d.group); })
         .on("click", function(d) {
             console.log("hull click", d, arguments, this, expand[d.group]);
-            expand[d.group] = false; init();
+            expand[d.group] = false; init(jsonData);
         });
 
     link = linkg.selectAll("line.link").data(net.links, linkid);
@@ -240,15 +240,25 @@ var init = function (jsonData) {
         .attr("r", function(d) { return d.size ? d.size + dr : dr+1; })
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
+        .attr("data-tooltip","tooltip")
+        .attr("data-placement","right")
+        .attr("title",function(d){ return d.name; })
+        .attr("identifier",function(d){ return getIndexByNameFromData(d.name); })
         .style("fill", function(d) { return fill(d.group); })
         .on("click", function(d) {
             console.log("node click", d, arguments, this, expand[d.group]);
             expand[d.group] = !expand[d.group];
             init(jsonData);
+        })
+        .on("mouseover",function(d) {
+            console.log("node hover");
+        })
+        .on("mouseout",function(d) {
+            console.log("node hover out");
         });
 
     node.call(force.drag);
-
+    
     force.on("tick", function() {
         if (!hull.empty()) {
             hull.data(convexHulls(net.nodes, getGroup, off))
@@ -263,4 +273,33 @@ var init = function (jsonData) {
         node.attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
     });
+    
+    addEventsForNodes();
+    
+    /*Array.from(document.querySelectorAll('[data-toggle="tooltip"]')).forEach(function(item){
+        item.tooltip(); 
+    });*/
+}
+
+//не работает
+/*var addEventsForNodes = function(){
+    var $nodes = Array.from(document.querySelectorAll('[data-toggle="tooltip"]'));
+    $nodes.forEach(function(item){
+        item.addEventListener('mouseover',function(){
+            console.log('hey');
+        });
+    });
+}*/
+
+var getIndexByNameFromData = function(name){
+    let index=null;
+    data.nodes.forEach(function(item,i){
+        if(name==item.name) index=i;
+    });
+    
+    if(index==null){
+        console.log('error name '+name+' not found in visualize str: 290 !');  
+    } else{
+        return index;
+    }
 }
