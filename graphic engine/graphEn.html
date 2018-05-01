@@ -51,6 +51,12 @@
         svg, .descr>div{
           border: 1px solid #ccc;
         }
+        #graph-description{
+            padding: 10px;
+        }
+        #graph-description p{
+            color: rgba(0,0,0,.8);
+        }
     </style>
   </head>
   
@@ -62,7 +68,7 @@
           </section>
           <section class="descr">
               <h5>description</h5>
-              <div>
+              <div id='graph-description'>
                   
               </div>
           </section>
@@ -90,9 +96,14 @@
         var jsonData='';
         window.addEventListener('load', function() {
             
+            /*Recieving the data about transactions of account with the given name*/
             getJsonData('beesocial',function(result){
+                
+                /*jsonData - json string with all info about nodes and links that will appear in the graph (blockchainData.js)*/
                 jsonData = result;
                 console.log(jsonData);
+                
+                /*Launching the process of drawing (visualize.js required)*/
                 init(jsonData);
             });
             

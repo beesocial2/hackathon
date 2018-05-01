@@ -230,7 +230,11 @@ var init = function (jsonData) {
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; })
-        .style("stroke-width", function(d) { return d.size || 1; });
+        .style("stroke-width", function(d) { return d.size || 1; })
+        .on("mouseover",function(d) {
+            console.log(d.value);
+            printInfo('from: to: value: '+d.value);
+        });
 
     node = nodeg.selectAll("circle.node").data(net.nodes, nodeid);
     node.exit().remove();
@@ -251,10 +255,10 @@ var init = function (jsonData) {
             init(jsonData);
         })
         .on("mouseover",function(d) {
-            console.log("node hover");
+            printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
         })
         .on("mouseout",function(d) {
-            console.log("node hover out");
+            //console.log("node hover out");
         });
 
     node.call(force.drag);
@@ -274,11 +278,17 @@ var init = function (jsonData) {
             .attr("cy", function(d) { return d.y; });
     });
     
-    addEventsForNodes();
+    //addEventsForNodes();
     
     /*Array.from(document.querySelectorAll('[data-toggle="tooltip"]')).forEach(function(item){
         item.tooltip(); 
     });*/
+}
+
+var printInfo = function(text){
+    let block = document.getElementById('graph-description');
+    block.innerHTML = '';
+    block.innerHTML = '<p>'+text+'</p>';
 }
 
 //не работает
