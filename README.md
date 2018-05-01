@@ -1,4 +1,4 @@
 Beesocial
 
-https://github.com/beesocial2/hackathon
+https://beesocial2.github.io/hackathon/
 
