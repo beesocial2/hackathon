@@ -1,10 +1,42 @@
-<form action="" method="post">
-	<script
-		src="https://antonshwab.github.io/beesocial/checkout.js" class="golos-merchant-button"
-		data-account="imaguru"
-		data-amount="10.000 GOLOS"
-		data-name="Imaguru"
-		data-description="Buy coworking on 1 month (for 4 peoples)"
-		data-image="https://pp.userapi.com/c637916/v637916733/2e7b2/kodHKhnWZAQ.jpg">
+<title>Demo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="shortcut icon" href="bee-logo.ico" />
+
+<head>
+	<!-- Optional CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/default.min.css">
+	<!-- Optional JavaScript -->
+	<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
+	<script>
+		hljs.initHighlightingOnLoad();
 	</script>
-</form>
+</head>
+<style>
+	body {
+    padding: .5rem;
+}
+</style>
+
+<body>
+	<h2>Usage example BeeSocial Merchant-Widget</h2>
+	<div class="text-left">
+		1. Add JavaScript in your HTML-page:
+		<pre><code>&lt;script src=&quot;bsMerch.js&quot; 
+	class=&quot;golos-merchant-button&quot; 
+	data-account=&quot;imaguru&quot; 
+	data-amount=&quot;10.000 GOLOS&quot; 
+	data-name=&quot;Imaguru&quot; 
+	data-description=&quot;Buy coworking on 1 month (for 4 peoples)&quot; 
+	data-image=&quot;https://pp.userapi.com/c637916/v637916733/2e7b2/kodHKhnWZAQ.jpg&quot;&gt;
+&lt;/script;&gt;
+</code></pre> 2. Put this div tag in your HTML-page, where the Merch button will be:
+		<pre><code>&lt;div class=&quot;bsMerch&quot;&gt;&lt;/div&gt;</code></pre>
+	</div>
+	</div>
+	<!-- Put this div and script tags to the place, where the Poll block will be -->
+	<div class="bsMerch"></div>
+	<script src="bsMerch.js" class="golos-merchant-button" data-account="imaguru" data-amount="10.000 GOLOS" data-name="Imaguru" data-description="Buy coworking on 1 month (for 4 peoples)" data-image="https://pp.userapi.com/c637916/v637916733/2e7b2/kodHKhnWZAQ.jpg">
+	</script>
+	<p>
+		<p>That`s all folks!</p>
+</body>
