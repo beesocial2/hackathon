@@ -1,4 +1,4 @@
 Beesocial
 
-https://antonshwab.github.io/beesocial/
+https://github.com/beesocial2/hackathon
 
