@@ -20,9 +20,32 @@ window.addEventListener('load', function () { // init script after page loaded
 	console.log('<f> doc loaded');
 	golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
 	golos.config.set('websocket', 'wss://ws.testnet.golos.io');
-	bsButton = document.createElement('button');
-	bsButton.className = 'btn btn-outline-primary';
-	bsButton.type = 'button';
-	bsButton.innerHTML = `Donate with <img src="golos-icon-114x114.png" class="" height="20"> GOLOS`;
-	document.querySelector('.bsMerch').appendChild(bsButton); // div inject
+
 });
+
+bsButton = document.createElement('div');
+bsButton.innerHTML = `<div class="bsMerch"><button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">Donate with <img src="golos-icon-114x114.png" class="" height="20"> GOLOS
+</button>`;
+document.querySelector('.bsMerch').appendChild(bsButton); // div inject
+
+var bsModal = document.createElement('div');
+bsModal.innerHTML = `<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>`;
+document.getElementsByTagName('body')[0].appendChild(bsModal); // div inject
