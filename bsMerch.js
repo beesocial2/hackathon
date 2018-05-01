@@ -20,16 +20,28 @@ window.addEventListener('load', function () { // init script after page loaded
 	console.log('<f> doc loaded');
 	golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
 	golos.config.set('websocket', 'wss://ws.testnet.golos.io');
+	var modalBs = new Modal(document.getElementById('bsModal'))
 
+	document.querySelector('.bsMerch').getElementsByTagName('button')[0].addEventListener('click', function () {
+		console.log('bsButton click');
+		if (wif) {
+			modalBs.show();
+		} else {
+			console.log('auth() =>');
+			auth(() => {
+				modalBs.show();
+			});
+		}
+	})
 });
 
 bsButton = document.createElement('div');
-bsButton.innerHTML = `<div class="bsMerch"><button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">Donate with <img src="golos-icon-114x114.png" class="" height="20"> GOLOS
+bsButton.innerHTML = `<div class="bsMerch"><button type="button" class="btn btn-outline-primary">Donate with <img src="golos-icon-114x114.png" class="" height="20"> GOLOS
 </button>`;
-document.querySelector('.bsMerch').appendChild(bsButton); // div inject
+document.querySelector('.bsMerch').appendChild(bsButton); // button inject
 
 var bsModal = document.createElement('div');
-bsModal.innerHTML = `<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+bsModal.innerHTML = `<div class="modal fade" id="bsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -48,4 +60,4 @@ bsModal.innerHTML = `<div class="modal fade" id="exampleModal" tabindex="-1" rol
     </div>
   </div>
 </div>`;
-document.getElementsByTagName('body')[0].appendChild(bsModal); // div inject
+document.getElementsByTagName('body')[0].appendChild(bsModal); // modal inject
