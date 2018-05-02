@@ -1,3 +1,5 @@
+var modalBs;
+
 golosJs = document.createElement('script');
 golosJs.src = 'https://cdn.jsdelivr.net/npm/golos-js@0.6.3/dist/golos.min.js';
 (document.head || document.documentElement).appendChild(golosJs);
@@ -17,47 +19,32 @@ bootstrap.href = 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstr
 (document.head || document.documentElement).insertBefore(bootstrap, (document.head || document.documentElement).firstChild);
 
 window.addEventListener('load', function () { // init script after page loaded
-	console.log('<f> doc loaded');
-	golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
-	golos.config.set('websocket', 'wss://ws.testnet.golos.io');
-	var modalBs = new Modal(document.getElementById('bsModal'))
-	modalBs.show();
-	document.querySelector('.bsMerch').getElementsByTagName('button')[0].addEventListener('click', function () {
-		console.log('bsButton click');
-		if (wif) {
-			modalBs.show();
-		} else {
-			console.log('auth() =>');
-			auth(() => {
-				modalBs.show();
-			});
-		}
-	})
+console.log('<f> doc loaded');
+golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
+golos.config.set('websocket', 'wss://ws.testnet.golos.io');
+modalBs = new Modal(document.getElementById('bsModal'))
+if (wif) { // opens modal
+	getGolosAccount();
+} else {
+	console.log('auth() =>');
+	auth(() => {
+		getGolosAccount();
+	});
+}
 });
 
-bsButton = document.createElement('div');
-bsButton.innerHTML = `<div class="bsMerch"><button type="button" class="btn btn-outline-primary">Donate with <img src="golos-icon-114x114.png" class="" height="20"> GOLOS
-</button>`;
-document.querySelector('.bsMerch').appendChild(bsButton); // button inject
-
-var bsModal = document.createElement('div');
-bsModal.innerHTML = `<div class="modal fade" id="bsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>`;
-document.getElementsByTagName('body')[0].appendChild(bsModal); // modal inject
+function getGolosAccount() {
+	golos.api.getAccounts([username], function(err, response){
+	response[0].json_metadata = JSON.parse(response[0].json_metadata); // !check if exist name etc
+	document.querySelector('.twPc-divName a').innerHTML = response[0].json_metadata.profile.name;
+	document.querySelector('.twPc-divUser span a span').innerHTML = response[0].name;
+	document.querySelector('.twPc-divUser span a').href = 'https://testnet.golos.io/@' + response[0].name;
+	document.querySelector('.twPc-avatarImg').src = response[0].json_metadata.profile.profile_image;
+	document.querySelector('#transfersGolos a').href = 'https://testnet.golos.io/@' + response[0].name + '/transfers';
+	document.querySelector('#balanceGolosValue').innerHTML = response[0].balance;
+	document.querySelector('#transfersGbg a').href = 'https://testnet.golos.io/@' + response[0].name + '/transfers';
+	document.querySelector('#transfersGbgValue').innerHTML = response[0].sbd_balance;
+	console.log(response[0]);
+	modalBs.show();
+});
+}
