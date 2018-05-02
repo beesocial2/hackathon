@@ -14,14 +14,14 @@ bootstrap = document.createElement('link');
 bootstrap.rel = 'stylesheet';
 bootstrap.type = 'text/css';
 bootstrap.href = 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css';
-(document.head || document.documentElement).appendChild(bootstrap);
+(document.head || document.documentElement).insertBefore(bootstrap, (document.head || document.documentElement).firstChild);
 
 window.addEventListener('load', function () { // init script after page loaded
 	console.log('<f> doc loaded');
 	golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
 	golos.config.set('websocket', 'wss://ws.testnet.golos.io');
 	var modalBs = new Modal(document.getElementById('bsModal'))
-
+	modalBs.show();
 	document.querySelector('.bsMerch').getElementsByTagName('button')[0].addEventListener('click', function () {
 		console.log('bsButton click');
 		if (wif) {
