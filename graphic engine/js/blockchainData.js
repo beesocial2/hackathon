@@ -11,20 +11,16 @@ golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099
 var currentCluster = 1;
 var names = [];
 var trans = [];
+let namesExt = [];
 
 
 var getJsonData = function(currentName,callback){
     
     names = [];
     trans = [];
+    namesExtended = [];
     
-    golos.api.getAccounts(currentName, function(err, result) {
-        console.log(result);
-        /*result.forEach(function(item,i){
-        
-        
-        });*/
-    });
+    
     
     
     golos.api.getAccountHistory(currentName, -1, 100, function(err, result) {
@@ -42,16 +38,21 @@ var getJsonData = function(currentName,callback){
                     //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
                 }
             });
-            //console.log(names);
-            //console.log(trans);
-            //console.log(json_metadata);
-            //console.log(JSON.parse(json_metadata));
-            //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
-            //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
-            //console.log(namesToNodes(names));
-            let jsonData = makeJSON(namesToNodes(names),transfersToLines(trans,names));
-            
-            callback(jsonData);
+            console.log(names);
+            getAccountsInfo(names, function(result){
+                namesExt = result;
+                //let output = namesToNodes(names,namesExt);
+                //console.log(output);
+                //console.log( JSON.parse(output));
+                let jsonData = makeJSON(namesToNodes(names,namesExt),transfersToLines(trans,names));
+                callback(jsonData);
+                //console.log(trans);
+                //console.log(json_metadata);
+                //console.log(JSON.parse(json_metadata));
+                //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
+                //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
+                //console.log(namesToNodes(names));
+            });
         }else{
             console.log(err);
         }
@@ -81,12 +82,13 @@ var getIndexByName = function(name,names){
         return index;
     }
 }
-var namesToNodes = function(names){
+var namesToNodes = function(names,namesExt){
     //"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1}];
     let output = '"nodes":[';
     names.forEach(function(item,i){
         output += '{';
-        output += '"name":"'+item+'","group":'+currentCluster;
+        output += '"name":"'+item+'","group":'+currentCluster;//+',';
+        //output += '"misc":'+namesExt[i];
         if(i==names.length-1){
             output += '}';    
         }else{
@@ -94,6 +96,7 @@ var namesToNodes = function(names){
         }    
     });
     output+=']';
+    console.log(output);
     return output;
 }
 var transfersToLines = function(trans,names){
@@ -119,59 +122,23 @@ var GOLOStoNumber = function(amount){
     return Number(amount.substr(0,amount.indexOf(' ')));
 }
 
+//returns an array of json strings with additional data of accounts
+var getAccountsInfo = function(names,callback){
+    let resultArray = [];
+    
+    golos.api.getAccounts(names, function(err, result) {
+        if(!err){
+            console.log(result);
+            result.forEach(function(item,i){
+                let el = new Object();
+                el.id = item.id;
+                el.name = item.name;
+                //el.json_metadata = item.json_metadata;
+                //console.log("id: "+item.id+", name: "+item.name+", json_metadata: "+item.json_metadata);
+                resultArray.push(JSON.stringify( el));
+            });
+            callback(resultArray);
+        }
+    });
+}
 
-
-
-
-
-/*golos.api.getAccounts(currentNamesArray, function(err, result) {
-    //console.log(result);
-    result.forEach(function(item,i){
-        var circ = new Object();
-        
-    });*/
-                    
-                    
-                    //искать всевозможные транзакции между существующими участниками
-                    //цикл по именам
-                    /*names.slice(0,N).forEach(function(itemName){
-                        lines = [];
-                        //все транзакции для текущего имени
-                        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
-                            //console.log(err, result);
-                            
-                            //отсеивание валидных транзакций
-                            //если это операция трансфер + длина json'а нормальная + конечный узел существует на графе
-                            result.forEach(function(item){
-                                //console.log(item[1]);
-                                if(item[1].op[0]=="transfer" 
-                                   && item[1].op[1].memo.length>100 
-                                   && isCircExist(item[1].op[1].to)
-                                   && item[1].op[1].from == itemName
-                                ){
-                                    //console.log(item);
-                                    
-                                    let line = new Object();
-                                    let info = JSON.parse(item[1].op[1].memo);
-                                    line.from = getCircByName(info.from).ID;
-                                    info.to = info.to.replace(' d','');
-                                    line.to = getCircByName(info.to).ID;
-                                    line.hash = item[1].trx_id;
-                                    line.moreinfo = info.moreinfo;
-                                    line.tokens = info.tokens;
-                                    lines.push(line);
-                                    console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
-                                    //console.log('from: '+getTypeOfCirc(item[1].op[1].from)+' to: '+getTypeOfCirc(item[1].op[1].to));
-                                }
-                            });
-                            console.log('lines '+N);
-                            redrawLines(lines);
-                        });
-                        
-                    });*/
-                    /*console.log('circs '+N);
-                    redrawCircs(circs);
-                    N++;
-                });
-                
-            });*/

@@ -233,7 +233,7 @@ var init = function (jsonData) {
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; })
-        .style("stroke-width", function(d) { return d.size || 1; })
+        .style("stroke-width", function(d) { return d.size+3 || 3; })
         .on("mouseover",function(d) {
             console.log(d.value);
             printInfo('from: to: value: '+d.value);

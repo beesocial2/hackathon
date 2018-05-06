@@ -26,7 +26,10 @@
         line.link {
           stroke: #333;
           stroke-opacity: 0.5;
-          pointer-events: none;
+          /*pointer-events: none;*/
+        }
+        line.link:hover{
+            cursor: pointer;
         }
         .wrapper{
             display: flex;
@@ -104,7 +107,7 @@
                 console.log(jsonData);
                 
                 /*Launching the process of drawing (visualize.js required)*/
-                //init(jsonData);
+                init(jsonData);
             });
             
         });
