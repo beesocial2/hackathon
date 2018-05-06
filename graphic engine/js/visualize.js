@@ -106,6 +106,7 @@ function network(data, prev, index, expand) {
     
     for (i in lm) { links.push(lm[i]); }
     console.log(nodes);
+    console.log(expand);
     return {nodes: nodes, links: links};
 }
 
@@ -177,7 +178,9 @@ var init = function (jsonData) {
     if (force) force.stop();
 
     net = network(data, net, getGroup, expand);
-
+    
+    console.log(data);
+    console.log(net);
     force = d3.layout.force()
         .nodes(net.nodes)
         .links(net.links)
@@ -244,20 +247,30 @@ var init = function (jsonData) {
         .attr("r", function(d) { return d.size ? d.size + dr : dr+1; })
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-        .attr("data-tooltip","tooltip")
-        .attr("data-placement","right")
-        .attr("title",function(d){ return d.name; })
         .attr("identifier",function(d){ return getIndexByNameFromData(d.name); })
         .style("fill", function(d) { return fill(d.group); })
         .on("click", function(d) {
             console.log("node click", d, arguments, this, expand[d.group]);
-            expand[d.group] = !expand[d.group];
-            init(jsonData);
+            if(expand[d.group]){
+                //только для узлов в открытом кластере
+                printInfo('node click '+d.name);
+                //вызов метода дополнения jsonData
+                
+            }else{
+                expand[d.group] = !expand[d.group];
+                init(jsonData);
+            }
+            
         })
         .on("mouseover",function(d) {
-            printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
+            if(expand[d.group]){
+                printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
+            }
         })
         .on("mouseout",function(d) {
+            /*if(expand[d.group]){
+                printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
+            }*/
             //console.log("node hover out");
         });
 
@@ -268,7 +281,7 @@ var init = function (jsonData) {
             hull.data(convexHulls(net.nodes, getGroup, off))
                 .attr("d", drawCluster);
         }
-    
+        
         link.attr("x1", function(d) { return d.source.x; })
             .attr("y1", function(d) { return d.source.y; })
             .attr("x2", function(d) { return d.target.x; })

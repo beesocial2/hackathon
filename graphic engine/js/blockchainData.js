@@ -10,7 +10,7 @@ golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099
 //var currentName = 'beesocial';
 var currentCluster = 1;
 var names = [];
-var trans = []; 
+var trans = [];
 
 
 var getJsonData = function(currentName,callback){
@@ -18,12 +18,21 @@ var getJsonData = function(currentName,callback){
     names = [];
     trans = [];
     
+    golos.api.getAccounts(currentName, function(err, result) {
+        console.log(result);
+        /*result.forEach(function(item,i){
+        
+        
+        });*/
+    });
+    
+    
     golos.api.getAccountHistory(currentName, -1, 100, function(err, result) {
         
         if(!err){
             result.forEach(function(item){
                 if(item[1].op[0]=="transfer" ){
-                    //console.log(item);
+                    console.log(item);
                     //console.log(item);
                     addNew(item[1].op[1].from, names);
                     addNew(item[1].op[1].to, names);
