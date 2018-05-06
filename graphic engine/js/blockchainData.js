@@ -105,6 +105,7 @@ var transfersToLines = function(trans,names){
     trans.forEach(function(item,i){
         output += '{';
         output += '"source":"'+getIndexByName(item.from,names)+'","target":"'+getIndexByName(item.to,names)+'","value":'+GOLOStoNumber(item.amount);
+        output += ',"misc":{"from":"'+item.from+'","to":"'+item.to+'"}';
         if(i==trans.length-1){
             output += '}';    
         }else{
@@ -112,7 +113,7 @@ var transfersToLines = function(trans,names){
         }    
     });
     output+=']';
-    //console.log(output);
+    console.log(output);
     return output;
 }
 var makeJSON = function(nodes,lines){

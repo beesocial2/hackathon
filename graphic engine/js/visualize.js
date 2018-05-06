@@ -92,21 +92,28 @@ function network(data, prev, index, expand) {
     for (k=0; k<data.links.length; ++k) {
         var e = data.links[k],
             u = index(e.source),
-            v = index(e.target);
+            v = index(e.target),
+            g = e.value;
+        //console.log(e);
         if (u != v) {
             gm[u].link_count++;
             gm[v].link_count++;
         }
         u = expand[u] ? nm[e.source.name] : nm[u];
         v = expand[v] ? nm[e.target.name] : nm[v];
+        
         var i = (u<v ? u+"|"+v : v+"|"+u),
-            l = lm[i] || (lm[i] = {source:u, target:v, size:0});
+            l = lm[i] || (lm[i] = {source:u, target:v, size:0, amount:g });
         l.size += 1;
     }
     
     for (i in lm) { links.push(lm[i]); }
-    console.log(nodes);
-    console.log(expand);
+    
+    /*console.log(nodes);
+    console.log(data.nodes);
+    console.log(links);
+    console.log(data.links);*/
+    
     return {nodes: nodes, links: links};
 }
 
@@ -154,13 +161,13 @@ var init = function (jsonData) {
    
     for (var i=0; i<data.links.length; ++i) {
         o = data.links[i];
-        console.log(o);
-        console.log(data.nodes[o.source]);
-        console.log(data.nodes[o.target]);
+        //console.log(o);
+        //console.log(data.nodes[o.source]);
+        //console.log(data.nodes[o.target]);
         o.source = data.nodes[o.source];
  
         o.target = data.nodes[o.target];
-        console.log(o);
+        //console.log(o);
     }
     hullg = vis.append("g");
     linkg = vis.append("g");
@@ -233,10 +240,13 @@ var init = function (jsonData) {
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; })
+        .attr("ID", function (d,i) { return i;})
         .style("stroke-width", function(d) { return d.size+3 || 3; })
         .on("mouseover",function(d) {
-            console.log(d.value);
-            printInfo('from: to: value: '+d.value);
+            let toNameId = getIndexByNameFromData(d.target.name);
+            let fromNameId = getIndexByNameFromData(d.source.name);
+            //console.log(d.value);
+            printInfo('from: '+d.source.name+' ('+fromNameId+'); to: '+d.target.name+' ('+toNameId+'), value: '+ d.amount);
         });
 
     node = nodeg.selectAll("circle.node").data(net.nodes, nodeid);
@@ -247,7 +257,7 @@ var init = function (jsonData) {
         .attr("r", function(d) { return d.size ? d.size + dr : dr+1; })
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-        .attr("identifier",function(d){ return getIndexByNameFromData(d.name); })
+        .attr("ID",function(d){ return getIndexByNameFromData(d.name); })
         .style("fill", function(d) { return fill(d.group); })
         .on("click", function(d) {
             console.log("node click", d, arguments, this, expand[d.group]);
@@ -304,16 +314,6 @@ var printInfo = function(text){
     block.innerHTML = '<p>'+text+'</p>';
 }
 
-//не работает
-/*var addEventsForNodes = function(){
-    var $nodes = Array.from(document.querySelectorAll('[data-toggle="tooltip"]'));
-    $nodes.forEach(function(item){
-        item.addEventListener('mouseover',function(){
-            console.log('hey');
-        });
-    });
-}*/
-
 var getIndexByNameFromData = function(name){
     let index=null;
     data.nodes.forEach(function(item,i){
@@ -326,3 +326,6 @@ var getIndexByNameFromData = function(name){
         return index;
     }
 }
+
+//var getInfoAboutNode = function(){};
+//var getLinks = function(from,to){};
