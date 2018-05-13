@@ -102,16 +102,16 @@
         window.addEventListener('load', function() {
             
             /*Recieving the data about transactions of account with the given name*/
-            getJsonData('beesocial',1,function(result){
+            getJsonData('beesocial',false,function(result){
                 
-                /*jsonData - json string with all info about nodes and links that will appear in the graph (blockchainData.js)*/
-                jsonData = result;
-                console.log(jsonData);
+                /*  jsonData - json string with all info about nodes and links that will appear in the graph (blockchainData.js)*/
+                //jsonData = result;
+                //console.log(jsonData);
                 
-                /*Launching the process of drawing (visualize.js required)*/
-                init(jsonData);
-            });
-            
+                /*  Launching the process of drawing (visualize.js required)*/
+                //init(jsonData);
+                
+            });            
         });
         
         

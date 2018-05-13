@@ -10,53 +10,71 @@ golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099
 //var currentName = 'beesocial';
 var currentCluster = 1;
 var names = [];
+var namesExpanded = ['beesocial'];// accounts that are central at the moment
 var trans = [];
-let namesExt = [];
+let namesExt = [];// more info about accounts
 
 
-var getJsonData = function(currentName,currentCluster,callback){
+var getJsonData = function(currentName,newCluster,callback){
     
     names = [];
     trans = [];
-    namesExtended = [];
     
     
-    
-    
-    golos.api.getAccountHistory(currentName, -1, 100, function(err, result) {
+    /*create new cluster if this name has never been expanded*/
+    if(newCluster && !isHere(currentName,namesExpanded)){
         
-        if(!err){
-            result.forEach(function(item){
-                if(item[1].op[0]=="transfer" ){
-                    console.log(item);
-                    //console.log(item);
-                    addNew(item[1].op[1].from, names);
-                    addNew(item[1].op[1].to, names);
-                    trans.push(item[1].op[1]);
-                    
-                    //let info = JSON.parse(item[1].op[1].memo);
-                    //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
-                }
-            });
-            console.log(names);
-            getAccountsInfo(names, function(result){
-                namesExt = result;
-                //let output = namesToNodes(names,namesExt);
-                //console.log(output);
-                //console.log( JSON.parse(output));
-                let jsonData = makeJSON(namesToNodes(names,namesExt),transfersToLines(trans,names));
-                callback(jsonData);
-                //console.log(trans);
-                //console.log(json_metadata);
-                //console.log(JSON.parse(json_metadata));
-                //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
-                //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
-                //console.log(namesToNodes(names));
-            });
-        }else{
-            console.log(err);
-        }
+        /*additional nodes to new cluster*/
+        currentCluster++;
+        /*central nodes are in the namesExpanded array*/
+        addNew(currentName,namesExpanded);
+    }
+    
+    
+    
+   
+    namesExtended = [];
+
+    namesExpanded.forEach(function(itemName){
+        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
+        
+            if(!err){
+                result.forEach(function(item){
+                    if(item[1].op[0]=="transfer" ){
+                        //console.log(item);
+                        //console.log(item);
+                        addNew(item[1].op[1].from, names);
+                        addNew(item[1].op[1].to, names);
+                        trans.push(item[1].op[1]);
+                        
+                        //let info = JSON.parse(item[1].op[1].memo);
+                        //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
+                    }
+                });
+                console.log(names);
+                console.log(namesExpanded);
+                console.log(currentCluster);
+                console.log(trans);
+                /*getAccountsInfo(names, function(result){
+                    namesExt = result;
+                    //let output = namesToNodes(names,namesExt);
+                    //console.log(output);
+                    //console.log( JSON.parse(output));
+                    let jsonData = makeJSON(namesToNodes(names,namesExt),transfersToLines(trans,names));
+                    callback(jsonData);
+                    //console.log(trans);
+                    //console.log(json_metadata);
+                    //console.log(JSON.parse(json_metadata));
+                    //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
+                    //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
+                    //console.log(namesToNodes(names));
+                });*/
+            }else{
+                console.log(err);
+            }
+        });   
     });
+    
 }
 
 
@@ -68,6 +86,15 @@ var addNew = function(element, array){
     });
     if(same == false) array.push(element);
     return array;
+}
+
+/*Says is the element in the array*/
+var isHere = function(element, array){
+    let res = false;
+    array.forEach(function(item){
+        if(item==element) res=true;
+    });
+    return res;
 }
 
 var getIndexByName = function(name,names){
