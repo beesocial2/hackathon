@@ -4,6 +4,7 @@
     <title>Clustered Network</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <script src="http://d3js.org/d3.v2.js"></script>
+    <script src="https://unpkg.com/tippy.js@2.5.2/dist/tippy.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/golos-js@0.6.1/dist/golos.min.js"></script>
     <script src="js/blockchainData.js"></script>
     <style type="text/css">
@@ -101,7 +102,7 @@
         window.addEventListener('load', function() {
             
             /*Recieving the data about transactions of account with the given name*/
-            getJsonData('beesocial',function(result){
+            getJsonData('beesocial',1,function(result){
                 
                 /*jsonData - json string with all info about nodes and links that will appear in the graph (blockchainData.js)*/
                 jsonData = result;

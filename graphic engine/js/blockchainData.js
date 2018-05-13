@@ -14,7 +14,7 @@ var trans = [];
 let namesExt = [];
 
 
-var getJsonData = function(currentName,callback){
+var getJsonData = function(currentName,currentCluster,callback){
     
     names = [];
     trans = [];

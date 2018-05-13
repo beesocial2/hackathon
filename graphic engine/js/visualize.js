@@ -258,6 +258,7 @@ var init = function (jsonData) {
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
         .attr("ID",function(d){ return getIndexByNameFromData(d.name); })
+        .attr("title",function(d) { return 'id: '+getIndexByNameFromData(d.name)+', name: '+d.name; })
         .style("fill", function(d) { return fill(d.group); })
         .on("click", function(d) {
             console.log("node click", d, arguments, this, expand[d.group]);
@@ -266,13 +267,16 @@ var init = function (jsonData) {
                 printInfo('node click '+d.name);
                 //вызов метода дополнения jsonData
                 
+                getJsonData(d.name, 2,function(result){
+                    init(result);  
+                });
             }else{
                 expand[d.group] = !expand[d.group];
                 init(jsonData);
             }
             
-        })
-        .on("mouseover",function(d) {
+        });
+        /*.on("mouseover",function(d) {
             if(expand[d.group]){
                 printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
             }
@@ -282,7 +286,7 @@ var init = function (jsonData) {
                 printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
             }*/
             //console.log("node hover out");
-        });
+        //});
 
     node.call(force.drag);
     
@@ -303,9 +307,13 @@ var init = function (jsonData) {
     
     //addEventsForNodes();
     
-    /*Array.from(document.querySelectorAll('[data-toggle="tooltip"]')).forEach(function(item){
-        item.tooltip(); 
+    /*Array.from(document.getElementsByClassName('node')).forEach(function(item){
+        new Tooltip(item, {
+            placement: 'top', // or bottom, left, right, and variations
+            title: "Top"
+        });
     });*/
+    tippy('circle.node');
 }
 
 var printInfo = function(text){
