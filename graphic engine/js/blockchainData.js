@@ -9,15 +9,26 @@ golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099
 
 //var currentName = 'beesocial';
 var currentCluster = 1;
-var names = [];
-var namesExpanded = ['beesocial'];// accounts that are central at the moment
+//var names = [];
+var namesExpanded = [];// accounts that are central at the moment
 var trans = [];
 let namesExt = [];// more info about accounts
+
+var names = new Array();
+/*for(i=0;i<n;i++){
+    ksi_2[i] = new Array();
+    for(j=0;j<n;j++){
+        ksi_2[i][j] = 0;
+    }
+}*/
 
 
 var getJsonData = function(currentName,newCluster,callback){
     
-    names = [];
+    if(namesExpanded.length==0) namesExpanded.push(currentName);
+       
+    //names = [];
+    names = new Array();
     trans = [];
     
     
@@ -26,6 +37,7 @@ var getJsonData = function(currentName,newCluster,callback){
         
         /*additional nodes to new cluster*/
         currentCluster++;
+        
         /*central nodes are in the namesExpanded array*/
         addNew(currentName,namesExpanded);
     }
@@ -35,26 +47,32 @@ var getJsonData = function(currentName,newCluster,callback){
    
     namesExtended = [];
 
-    namesExpanded.forEach(function(itemName){
-        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
+    namesExpanded.forEach(function(itemName,cluster){
         
+        
+        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
+            names[cluster] = new Array();
             if(!err){
                 result.forEach(function(item){
                     if(item[1].op[0]=="transfer" ){
                         //console.log(item);
                         //console.log(item);
-                        addNew(item[1].op[1].from, names);
-                        addNew(item[1].op[1].to, names);
+                        addNewToDSA(item[1].op[1].from, names, cluster);
+                        addNewToDSA(item[1].op[1].to, names, cluster);
                         trans.push(item[1].op[1]);
                         
                         //let info = JSON.parse(item[1].op[1].memo);
                         //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
                     }
                 });
-                console.log(names);
+                console.log(names[cluster]);
                 console.log(namesExpanded);
                 console.log(currentCluster);
-                console.log(trans);
+                console.log(cluster+1);
+                console.log(names);
+                //console.log(trans);
+                
+                //console.log(namesToNodes(names,cluster+1));
                 /*getAccountsInfo(names, function(result){
                     namesExt = result;
                     //let output = namesToNodes(names,namesExt);
@@ -88,6 +106,18 @@ var addNew = function(element, array){
     return array;
 }
 
+/*Add new to double size array*/
+var addNewToDSA = function(element, array, cluster){
+    let i=0,j=0,same=false;
+    for(;i<array.length;i++){
+        for(j=0;j<array[i].length;j++){
+            if(array[i][j] == element) same = true;
+        }
+    }
+    if(same == false) array[cluster].push(element);
+    return array;
+}
+
 /*Says is the element in the array*/
 var isHere = function(element, array){
     let res = false;
@@ -109,12 +139,13 @@ var getIndexByName = function(name,names){
         return index;
     }
 }
-var namesToNodes = function(names,namesExt){
+var namesToNodes = function(names,cluster){
     //"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1}];
-    let output = '"nodes":[';
+    //let output = '"nodes":[';
+    let output = '';
     names.forEach(function(item,i){
         output += '{';
-        output += '"name":"'+item+'","group":'+currentCluster;//+',';
+        output += '"name":"'+item+'","group":'+cluster;//+',';
         //output += '"misc":'+namesExt[i];
         if(i==names.length-1){
             output += '}';    
@@ -122,8 +153,8 @@ var namesToNodes = function(names,namesExt){
             output += '},';
         }    
     });
-    output+=']';
-    console.log(output);
+    //output+=']';
+    //console.log(output);
     return output;
 }
 var transfersToLines = function(trans,names){
