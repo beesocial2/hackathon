@@ -13,6 +13,7 @@ var currentCluster = 1;
 var namesExpanded = [];// accounts that are central at the moment
 var trans = [];
 let namesExt = [];// more info about accounts
+var cluster = 0;
 
 var names = new Array();
 /*for(i=0;i<n;i++){
@@ -42,57 +43,58 @@ var getJsonData = function(currentName,newCluster,callback){
         addNew(currentName,namesExpanded);
     }
     
-    
-    
-   
     namesExtended = [];
-
-    namesExpanded.forEach(function(itemName,cluster){
-        
-        
-        golos.api.getAccountHistory(itemName, -1, 100, function(err, result) {
-            names[cluster] = new Array();
-            if(!err){
-                result.forEach(function(item){
-                    if(item[1].op[0]=="transfer" ){
-                        //console.log(item);
-                        //console.log(item);
-                        addNewToDSA(item[1].op[1].from, names, cluster);
-                        addNewToDSA(item[1].op[1].to, names, cluster);
-                        trans.push(item[1].op[1]);
-                        
-                        //let info = JSON.parse(item[1].op[1].memo);
-                        //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
-                    }
-                });
-                console.log(names[cluster]);
-                console.log(namesExpanded);
-                console.log(currentCluster);
-                console.log(cluster+1);
-                console.log(names);
-                //console.log(trans);
-                
-                //console.log(namesToNodes(names,cluster+1));
-                /*getAccountsInfo(names, function(result){
-                    namesExt = result;
-                    //let output = namesToNodes(names,namesExt);
-                    //console.log(output);
-                    //console.log( JSON.parse(output));
-                    let jsonData = makeJSON(namesToNodes(names,namesExt),transfersToLines(trans,names));
-                    callback(jsonData);
-                    //console.log(trans);
-                    //console.log(json_metadata);
-                    //console.log(JSON.parse(json_metadata));
-                    //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
-                    //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
-                    //console.log(namesToNodes(names));
-                });*/
-            }else{
-                console.log(err);
-            }
-        });   
-    });
     
+    getNames(0,namesExpanded);
+    
+}
+
+
+var getNames = function(cluster,namesExpanded){
+    
+    golos.api.getAccountHistory(namesExpanded[cluster], -1, 100, function(err, result) {
+        names[cluster] = new Array();
+        if(!err){
+            result.forEach(function(item){
+                if(item[1].op[0]=="transfer" ){
+                    //console.log(item);
+                    //console.log(item);
+                    addNewToDSA(item[1].op[1].from, names, cluster);
+                    addNewToDSA(item[1].op[1].to, names, cluster);
+                    trans.push(item[1].op[1]);
+                    
+                    //let info = JSON.parse(item[1].op[1].memo);
+                    //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
+                }
+            });
+            console.log(names[cluster]);
+            console.log(namesExpanded);
+            console.log(currentCluster);
+            console.log(cluster+1);
+            console.log(names);
+            //console.log(trans);
+            
+            //console.log(namesToNodes(names,cluster+1));
+            /*getAccountsInfo(names, function(result){
+                namesExt = result;
+                //let output = namesToNodes(names,namesExt);
+                //console.log(output);
+                //console.log( JSON.parse(output));
+                let jsonData = makeJSON(namesToNodes(names,namesExt),transfersToLines(trans,names));
+                callback(jsonData);
+                //console.log(trans);
+                //console.log(json_metadata);
+                //console.log(JSON.parse(json_metadata));
+                //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
+                //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
+                //console.log(namesToNodes(names));
+            });*/
+            cluster++;
+            if(cluster<namesExpanded.length) getNames(cluster,namesExpanded);
+        }else{
+            console.log(err);
+        }
+    });    
 }
 
 
