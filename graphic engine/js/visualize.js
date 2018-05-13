@@ -241,13 +241,18 @@ var init = function (jsonData) {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; })
         .attr("ID", function (d,i) { return i;})
-        .style("stroke-width", function(d) { return d.size+3 || 3; })
-        .on("mouseover",function(d) {
+        .attr("title", function(d){ 
+            let toNameId = getIndexByNameFromData(d.target.name);
+            let fromNameId = getIndexByNameFromData(d.source.name);
+            return 'from: '+d.source.name+' ('+fromNameId+'); to: '+d.target.name+' ('+toNameId+'), value: '+ d.amount;
+        })
+        .style("stroke-width", function(d) { return d.size+3 || 3; });
+        /*.on("mouseover",function(d) {
             let toNameId = getIndexByNameFromData(d.target.name);
             let fromNameId = getIndexByNameFromData(d.source.name);
             //console.log(d.value);
             printInfo('from: '+d.source.name+' ('+fromNameId+'); to: '+d.target.name+' ('+toNameId+'), value: '+ d.amount);
-        });
+        });*/
 
     node = nodeg.selectAll("circle.node").data(net.nodes, nodeid);
     node.exit().remove();
@@ -314,6 +319,7 @@ var init = function (jsonData) {
         });
     });*/
     tippy('circle.node');
+    tippy('line.link');
 }
 
 var printInfo = function(text){
