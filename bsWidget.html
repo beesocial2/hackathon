@@ -252,7 +252,7 @@
 								<ul class="twPc-Arrange">
 									<li class="twPc-ArrangeSizeFit" id="transfersGolos">
 										<a href="" target="_blank">
-						<span class="twPc-StatLabel twPc-block">GOLOS Balance</span>
+						<span class="twPc-StatLabel twPc-block">Balance</span>
 						<span class="twPc-StatValue" id="balanceGolosValue"></span>
 					</a>
 									</li>
@@ -271,25 +271,18 @@
 						<div class="card-body">
 							<h5 class="card-title">Please, confirm the payment</h5>
 							<h6 class="card-subtitle mb-2 text-muted">use the slider or just enter the amount manually</h6>
-
-							<!--<div class="input-group input-group-sm mb-3" >
-							<input type="range">
-								<input type="text" class="form-control" placeholder="0.000" aria-describedby="basic-addon2">
-								<div class="input-group-append">
-									<span class="input-group-text" id="basic-addon2">GOLOS</span>
-								</div>
-							</div>-->
-							<div class="input-group input-group-sm mb-3">
-								<input type="text" class="form-control" aria-label="Text input with dropdown button">
-								<div class="input-group-append">
-									<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GOLOS</button>
-									<div class="dropdown-menu">
-										<a class="dropdown-item" href="#">GOLOS</a>
+							<input id="totalAmount" type="range" style="width: 60%">
+							<div class="input-group input-group-sm mb-3" style="width: 90%">
+								<input type="text" class="form-control" placeholder="0.000">
+								<div class="dropdown">
+									<a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GOLOS</a>
+									<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 										<a class="dropdown-item" href="#">GBG</a>
+										<a class="dropdown-item" href="#">GOLOS</a>
 									</div>
 								</div>
 							</div>
-							<a href="#" class="btn btn-primary btn-sm">Confirm</a>
+							<a href="#" class="btn btn-primary btn-sm">Transfer</a>
 							<p class="card-text"><small class="text-muted"><br>All the proceeds will be delivered to the Canopy Project, organized by the Earth Day Network, a 501(c)(3) non-profit focused on broadening and diversifying the environmental movement worldwide, and mobilizing it as the most effective vehicle for promoting a healthy, sustainable environment. <br>Please, visit our website <a href="http://beesocial.in" target="_blank" class="card-link">beesocial.in</a>  for more details</small></p>
 						</div>
 					</div>

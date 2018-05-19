@@ -34,6 +34,9 @@ if (wif) { // opens modal
 		getGolosAccount();
 	});
 }
+	document.querySelector('#totalAmount').addEventListener('input', () => {
+	console.log('js-input',document.querySelector('#totalAmount').value);
+}, false);
 });
 
 function getGolosAccount() {
