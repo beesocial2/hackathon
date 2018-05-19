@@ -1,4 +1,7 @@
 var modalBs;
+// patch for not working auth
+var 
+	username = 'kiriki1991';
 
 golosJs = document.createElement('script');
 golosJs.src = 'https://cdn.jsdelivr.net/npm/golos-js@0.6.3/dist/golos.min.js';
@@ -20,8 +23,8 @@ bootstrap.href = 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstr
 
 window.addEventListener('load', function () { // init script after page loaded
 console.log('<f> doc loaded');
-golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
-golos.config.set('websocket', 'wss://ws.testnet.golos.io');
+/*golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
+golos.config.set('websocket', 'wss://ws.testnet.golos.io');*/
 modalBs = new Modal(document.getElementById('bsModal'))
 if (wif) { // opens modal
 	getGolosAccount();

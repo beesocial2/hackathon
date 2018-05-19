@@ -1,109 +1,109 @@
 <head>
 	<script src="bsMerch.js"></script>
 	<style>
-[type='range'] {
-	-webkit-appearance: none;
-	margin: 12px 0;
-	width: 40%;
-	display: inline-block
-}
+		[type='range'] {
+			-webkit-appearance: none;
+			margin: 12px 0;
+			width: 40%;
+			display: inline-block
+		}
 
-[type='range']:focus {
-	outline: 0
-}
+		[type='range']:focus {
+			outline: 0
+		}
 
-[type='range']:focus::-webkit-slider-runnable-track {
-	background: #fbfbfc
-}
+		[type='range']:focus::-webkit-slider-runnable-track {
+			background: #fbfbfc
+		}
 
-[type='range']:focus::-ms-fill-lower {
-	background: #eceff1
-}
+		[type='range']:focus::-ms-fill-lower {
+			background: #eceff1
+		}
 
-[type='range']:focus::-ms-fill-upper {
-	background: #fbfbfc
-}
+		[type='range']:focus::-ms-fill-upper {
+			background: #fbfbfc
+		}
 
-[type='range']::-webkit-slider-runnable-track {
-	cursor: pointer;
-	height: 8px;
-	transition: all .2s ease;
-	width: 100%;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-	background: #eceff1;
-	border: 2px solid #cfd8dc;
-	border-radius: 5px
-}
+		[type='range']::-webkit-slider-runnable-track {
+			cursor: pointer;
+			height: 8px;
+			transition: all .2s ease;
+			width: 100%;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #eceff1;
+			border: 2px solid #cfd8dc;
+			border-radius: 5px
+		}
 
-[type='range']::-webkit-slider-thumb {
-	box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-	background: #2cadff;
-	border: 2px solid #eceff1;
-	border-radius: 12px;
-	cursor: pointer;
-	height: 24px;
-	width: 24px;
-	-webkit-appearance: none;
-	margin-top: -10px
-}
+		[type='range']::-webkit-slider-thumb {
+			box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
+			background: #2cadff;
+			border: 2px solid #eceff1;
+			border-radius: 12px;
+			cursor: pointer;
+			height: 24px;
+			width: 24px;
+			-webkit-appearance: none;
+			margin-top: -10px
+		}
 
-[type='range']::-moz-range-track {
-	cursor: pointer;
-	height: 8px;
-	transition: all .2s ease;
-	width: 100%;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-	background: #eceff1;
-	border: 2px solid #cfd8dc;
-	border-radius: 5px
-}
+		[type='range']::-moz-range-track {
+			cursor: pointer;
+			height: 8px;
+			transition: all .2s ease;
+			width: 100%;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #eceff1;
+			border: 2px solid #cfd8dc;
+			border-radius: 5px
+		}
 
-[type='range']::-moz-range-thumb {
-	box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-	background: #607d8b;
-	border: 2px solid #eceff1;
-	border-radius: 12px;
-	cursor: pointer;
-	height: 24px;
-	width: 24px
-}
+		[type='range']::-moz-range-thumb {
+			box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
+			background: #607d8b;
+			border: 2px solid #eceff1;
+			border-radius: 12px;
+			cursor: pointer;
+			height: 24px;
+			width: 24px
+		}
 
-[type='range']::-ms-track {
-	cursor: pointer;
-	height: 8px;
-	transition: all .2s ease;
-	width: 100%;
-	background: transparent;
-	border-color: transparent;
-	border-width: 12px 0;
-	color: transparent
-}
+		[type='range']::-ms-track {
+			cursor: pointer;
+			height: 8px;
+			transition: all .2s ease;
+			width: 100%;
+			background: transparent;
+			border-color: transparent;
+			border-width: 12px 0;
+			color: transparent
+		}
 
-[type='range']::-ms-fill-lower {
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-	background: #dde3e6;
-	border: 2px solid #cfd8dc;
-	border-radius: 10px
-}
+		[type='range']::-ms-fill-lower {
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #dde3e6;
+			border: 2px solid #cfd8dc;
+			border-radius: 10px
+		}
 
-[type='range']::-ms-fill-upper {
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-	background: #eceff1;
-	border: 2px solid #cfd8dc;
-	border-radius: 10px
-}
+		[type='range']::-ms-fill-upper {
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #eceff1;
+			border: 2px solid #cfd8dc;
+			border-radius: 10px
+		}
 
-[type='range']::-ms-thumb {
-	box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-	background: #607d8b;
-	border: 2px solid #eceff1;
-	border-radius: 12px;
-	cursor: pointer;
-	height: 24px;
-	width: 24px;
-	margin-top: 0
-}
-		
+		[type='range']::-ms-thumb {
+			box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
+			background: #607d8b;
+			border: 2px solid #eceff1;
+			border-radius: 12px;
+			cursor: pointer;
+			height: 24px;
+			width: 24px;
+			margin-top: 0
+		}
+
 
 		button {
 			opacity: 0;
@@ -229,7 +229,6 @@
 <body>
 	<div class="bsMerch"></div>
 	<!-- Put this div and script tags to the place, where the Poll block will be -->
-
 	<div class="modal fade" id="bsModal" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -253,7 +252,7 @@
 								<ul class="twPc-Arrange">
 									<li class="twPc-ArrangeSizeFit" id="transfersGolos">
 										<a href="" target="_blank">
-						<span class="twPc-StatLabel twPc-block">Balance</span>
+						<span class="twPc-StatLabel twPc-block">GOLOS Balance</span>
 						<span class="twPc-StatValue" id="balanceGolosValue"></span>
 					</a>
 									</li>
@@ -270,29 +269,28 @@
 					<!-- tw end -->
 					<div class="card">
 						<div class="card-body">
-							<h5 class="card-title">Please, make a donation</h5>
+							<h5 class="card-title">Please, confirm the payment</h5>
 							<h6 class="card-subtitle mb-2 text-muted">use the slider or just enter the amount manually</h6>
+
+							<!--<div class="input-group input-group-sm mb-3" >
 							<input type="range">
-							<div class="input-group input-group-sm mb-3" style="width: 40%;">
 								<input type="text" class="form-control" placeholder="0.000" aria-describedby="basic-addon2">
 								<div class="input-group-append">
 									<span class="input-group-text" id="basic-addon2">GOLOS</span>
 								</div>
+							</div>-->
+							<div class="input-group input-group-sm mb-3">
+								<input type="text" class="form-control" aria-label="Text input with dropdown button">
+								<div class="input-group-append">
+									<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GOLOS</button>
+									<div class="dropdown-menu">
+										<a class="dropdown-item" href="#">GOLOS</a>
+										<a class="dropdown-item" href="#">GBG</a>
+									</div>
+								</div>
 							</div>
-							<p class="card-text">All the proceeds will be delivered to the Canopy Project, organized by the Earth Day Network, a 501(c)(3) non-profit focused on broadening and diversifying the environmental movement worldwide, and mobilizing it as the most effective vehicle for promoting a healthy, sustainable environment. Please, visit our website <a href="http://beesocial.in" target="_blank" class="card-link">beesocial.in</a>  for more details</p>
-							<a href="#" class="btn btn-primary btn-sm">Transfer</a>
-							
-							<form class="form-inline" role="form">
-<div class="row">
-    <div class="form-group col-sm-3">
-        <div class="input-group"> <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-
-            <input type="email" class="form-control" placeholder="Enter email" />
-        </div>
-    </div>
-</div>
-							
-							
+							<a href="#" class="btn btn-primary btn-sm">Confirm</a>
+							<p class="card-text"><small class="text-muted"><br>All the proceeds will be delivered to the Canopy Project, organized by the Earth Day Network, a 501(c)(3) non-profit focused on broadening and diversifying the environmental movement worldwide, and mobilizing it as the most effective vehicle for promoting a healthy, sustainable environment. <br>Please, visit our website <a href="http://beesocial.in" target="_blank" class="card-link">beesocial.in</a>  for more details</small></p>
 						</div>
 					</div>
 				</div>
