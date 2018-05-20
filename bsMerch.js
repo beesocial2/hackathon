@@ -1,6 +1,6 @@
 var modalBs;
 // patch for not working auth
-var
+var wif = '5JSAM1dGaBT9q676jxaPawvvaHVs7xzddwnBdGrUWDPCreWtmSL',
 	username = 'kiriki1991';
 
 golosJs = document.createElement('script');
@@ -15,6 +15,12 @@ golosAuth = document.createElement('script');
 golosAuth.src = 'https://golosimages.com/auth.js';
 (document.head || document.documentElement).appendChild(golosAuth);
 
+styles = document.createElement('link');
+styles.rel = 'stylesheet';
+styles.type = 'text/css';
+styles.href = 'bsWidget.css';
+(document.head || document.documentElement).insertBefore(styles, (document.head || document.documentElement).firstChild);
+
 bootstrap = document.createElement('link');
 bootstrap.rel = 'stylesheet';
 bootstrap.type = 'text/css';
@@ -23,9 +29,10 @@ bootstrap.href = 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstr
 
 window.addEventListener('load', function () { // init script after page loaded
 	console.log('<f> doc loaded');
+	window.removeEventListener('load', function() {});
 	/*golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
 	golos.config.set('websocket', 'wss://ws.testnet.golos.io');*/
-	modalBs = new Modal(document.getElementById('bsModal'))
+	modalBs = new Modal(document.getElementById('bsModal'));
 	if (wif) { // opens modal
 		getGolosAccount();
 	} else {
@@ -34,6 +41,11 @@ window.addEventListener('load', function () { // init script after page loaded
 			getGolosAccount();
 		});
 	}
+	document.querySelector('#bsModal').addEventListener('hidden.bs.modal', () => {
+		setTimeout(function () {
+			window.location.reload();
+		});
+	}, false);
 });
 
 function getGolosAccount() {

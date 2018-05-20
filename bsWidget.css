@@ -1,0 +1,222 @@
+			[type='range'] {
+			-webkit-appearance: none;
+			margin: 12px 0;
+			width: 40%;
+			display: inline-block
+		}
+
+		[type='range']:focus {
+			outline: 0
+		}
+
+		[type='range']:focus::-webkit-slider-runnable-track {
+			background: #fbfbfc
+		}
+
+		[type='range']:focus::-ms-fill-lower {
+			background: #eceff1
+		}
+
+		[type='range']:focus::-ms-fill-upper {
+			background: #fbfbfc
+		}
+
+		[type='range']::-webkit-slider-runnable-track {
+			cursor: pointer;
+			height: 8px;
+			transition: all .2s ease;
+			width: 100%;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #eceff1;
+			border: 2px solid #cfd8dc;
+			border-radius: 5px
+		}
+
+		[type='range']::-webkit-slider-thumb {
+			box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
+			background: #2cadff;
+			border: 2px solid #eceff1;
+			border-radius: 12px;
+			cursor: pointer;
+			height: 24px;
+			width: 24px;
+			-webkit-appearance: none;
+			margin-top: -10px
+		}
+
+		[type='range']::-moz-range-track {
+			cursor: pointer;
+			height: 8px;
+			transition: all .2s ease;
+			width: 100%;
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #eceff1;
+			border: 2px solid #cfd8dc;
+			border-radius: 5px
+		}
+
+		[type='range']::-moz-range-thumb {
+			box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
+			background: #607d8b;
+			border: 2px solid #eceff1;
+			border-radius: 12px;
+			cursor: pointer;
+			height: 24px;
+			width: 24px
+		}
+
+		[type='range']::-ms-track {
+			cursor: pointer;
+			height: 8px;
+			transition: all .2s ease;
+			width: 100%;
+			background: transparent;
+			border-color: transparent;
+			border-width: 12px 0;
+			color: transparent
+		}
+
+		[type='range']::-ms-fill-lower {
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #dde3e6;
+			border: 2px solid #cfd8dc;
+			border-radius: 10px
+		}
+
+		[type='range']::-ms-fill-upper {
+			box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
+			background: #eceff1;
+			border: 2px solid #cfd8dc;
+			border-radius: 10px
+		}
+
+		[type='range']::-ms-thumb {
+			box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
+			background: #607d8b;
+			border: 2px solid #eceff1;
+			border-radius: 12px;
+			cursor: pointer;
+			height: 24px;
+			width: 24px;
+			margin-top: 0
+		}
+
+
+		button {
+			opacity: 0;
+		}
+
+		body {
+			background-color: rgba(0, 0, 0, 0);
+		}
+
+		.modal-body {
+			padding: 0rem;
+		}
+
+		.twPc-div {
+			background: #fff none repeat scroll 0 0;
+			border-radius: 6px;
+			height: 200px;
+			max-width: 100%; // orginal twitter width: 290px;
+		}
+
+		.twPc-bg {
+			background-image: url("img/header.png");
+			background-position: 0 50%;
+			background-size: 100% auto;
+			border-bottom: 1px solid #e1e8ed;
+			border-radius: 4px 4px 0 0;
+			height: 95px;
+			width: 100%;
+		}
+
+		.twPc-block {
+			display: block !important;
+		}
+
+		.twPc-button {
+			margin: -35px -10px 0;
+			text-align: right;
+			width: 100%;
+		}
+
+		.twPc-avatarLink {
+			background-color: #fff;
+			border-radius: 6px;
+			display: inline-block !important;
+			float: left;
+			margin: -30px 5px 0 8px;
+			max-width: 100%;
+			padding: 1px;
+			vertical-align: bottom;
+		}
+
+		.twPc-avatarImg {
+			border: 2px solid #fff;
+			border-radius: 7px;
+			box-sizing: border-box;
+			color: #fff;
+			height: 72px;
+			width: 72px;
+		}
+
+		.twPc-divUser {
+			margin: 5px 0 0;
+		}
+
+		.twPc-divName {
+			font-size: 18px;
+			font-weight: 700;
+			line-height: 21px;
+		}
+
+		.twPc-divName a {
+			color: inherit !important;
+		}
+
+		.twPc-divStats {
+			margin-left: 11px;
+			padding: 10px 0;
+		}
+
+		.twPc-Arrange {
+			box-sizing: border-box;
+			display: table;
+			margin: 0;
+			min-width: 100%;
+			padding: 0;
+			table-layout: auto;
+		}
+
+		ul.twPc-Arrange {
+			list-style: outside none none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.twPc-ArrangeSizeFit {
+			display: table-cell;
+			padding: 0;
+			vertical-align: top;
+		}
+
+		.twPc-ArrangeSizeFit a:hover {
+			text-decoration: none;
+		}
+
+		.twPc-StatValue {
+			display: block;
+			font-size: 18px;
+			font-weight: 500;
+			transition: color 0.15s ease-in-out 0s;
+		}
+
+		.twPc-StatLabel {
+			color: #8899a6;
+			font-size: 10px;
+			letter-spacing: 0.02em;
+			overflow: hidden;
+			text-transform: uppercase;
+			transition: color 0.15s ease-in-out 0s;
+		}
