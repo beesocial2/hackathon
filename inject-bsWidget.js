@@ -1,16 +1,45 @@
+window.addEventListener('message', function (e) {
+			if (e.data == 'hidden.bs.modal') {
+				document.querySelector('.framediv').remove();
+				console.log('message', e.data); // debug
+			}
+			if (e.data == 'modalBs.show') {
+				document.querySelector('.lding').style.display = 'none';
+				console.log('message', e.data); // debug
+			}
+        });
+
+cubeloader = document.createElement('link');
+cubeloader.rel = 'stylesheet';
+cubeloader.type = 'text/css';
+cubeloader.href = 'cubeloader.css';
+(document.head || document.documentElement).appendChild(cubeloader);
+
 widgetButton = document.createElement('button');
 widgetButton.type = 'button';
 widgetButton.id = 'initButton';
-widgetButton.class = 'btn btn-primary';
+widgetButton.className = 'btn btn-primary';
 widgetButton.innerHTML = 'Pay with GOLOS';
-document.querySelector('.bsMerch').appendChild(widgetButton); // div inject
+document.querySelector('.bsMerch').appendChild(widgetButton); // button inject
+lds = document.createElement('div');
+lds.className = 'lding';
+lds.innerHTML = `<div class="lds-css ng-scope">
+			<div class="lds-cube">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>`;
+(document.body || document.documentElement).insertBefore(lds, (document.body || document.documentElement).firstChild); // lds inject
 
 document.querySelector('#initButton').addEventListener('click', () => {
-bsIframe = document.createElement('div');
-bsIframe.innerHTML = `<iframe frameborder="0" allowtransparency="true" src="bsWidget.html" style="display: none;"></iframe>`;
-document.querySelector('.bsMerch').appendChild(bsIframe); // div inject
+document.querySelector('.lding').style.display = 'block';
+framediv = document.createElement('div');
+framediv.className = 'framediv';
+framediv.innerHTML = `<iframe frameborder="0" allowtransparency="true" src="bsWidget.html" style="display: none;"></iframe>`;
+document.querySelector('.bsMerch').appendChild(framediv); // div inject
  var iframe = document.getElementsByTagName('iframe')[0];
-  // сработает
   iframe.onload = function() {
     iframe.style = `style="
 			z-index: 2147483647;
