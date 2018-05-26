@@ -7,61 +7,80 @@ golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099
 //получает информацию о транзакциях и выдает json строку на выходе
 
 
-//var currentName = 'beesocial';
+/*Текущий кластер - для токена group в jsonData*/
 var currentCluster = 1;
 //var names = [];
-var namesExpanded = [];// accounts that are central at the moment
+
+/*accounts that are central at the moment*/
+/*массив с именами, которые сейчас являются цетрами*/
+var namesExpanded = [];
+
+/*массив со всеми транзакциями*/
+/*(решить вопрос с повторками и замыканием)*/
 var trans = [];
+
+/*массив с расширенной инфой об узлах - скорее всего не нужен*/
 let namesExt = [];// more info about accounts
+
+/*текущий кластер - работает как индекс для строки в двумерном массиве names*/
 var cluster = 0;
 
+/*Двумерный массив для имен, хранит минимальную инфу для построения узлов*/
 var names = new Array();
-/*for(i=0;i<n;i++){
-    ksi_2[i] = new Array();
-    for(j=0;j<n;j++){
-        ksi_2[i][j] = 0;
-    }
-}*/
 
 
-var getJsonData = function(currentName,newCluster,callback){
+var getJsonData = function(currentName, newCluster, callback) {
     
-    if(namesExpanded.length==0) namesExpanded.push(currentName);
+    if(namesExpanded.length == 0) namesExpanded.push(currentName);
        
     //names = [];
     names = new Array();
     trans = [];
     
-    
     /*create new cluster if this name has never been expanded*/
-    if(newCluster && !isHere(currentName,namesExpanded)){
+    /*создать новый кластер (новая строка в двумерном массиве names),
+        если параметр newCluster выставлен в true и
+        такого имени еще нет в массиве namesExpanded
+    */
+    if(newCluster && !isHere(currentName, namesExpanded) ) {
         
         /*additional nodes to new cluster*/
+        /**/
         currentCluster++;
         
         /*central nodes are in the namesExpanded array*/
-        addNew(currentName,namesExpanded);
+        addNew(currentName, namesExpanded);
     }
     
     namesExtended = [];
     
-    getNames(0,namesExpanded);
+    
+    /*функция пробегает по всем именам в namesExpanded - 
+        один элемент этого массива - один центральный узел в графе.
+        Все остальные имена выстраиваются вокруг них    
+    */
+    getNames(0, namesExpanded);
+    
+    //запуск рекурсивной функции. Внутри names заполняется правильно - легко сделать правильную jsonData.nodes
+    //решить вопрос с получением инфы о транзакциях
+    //решить вопрос как вернуть результат
+    
     
 }
 
 
-var getNames = function(cluster,namesExpanded){
+var getNames = function(cluster, namesExpanded) {
     
     golos.api.getAccountHistory(namesExpanded[cluster], -1, 100, function(err, result) {
         names[cluster] = new Array();
-        if(!err){
-            result.forEach(function(item){
-                if(item[1].op[0]=="transfer" ){
+        if(!err) {
+            result.forEach( function(item) {
+                if(item[1].op[0] == "transfer" ) {
                     //console.log(item);
                     //console.log(item);
                     addNewToDSA(item[1].op[1].from, names, cluster);
                     addNewToDSA(item[1].op[1].to, names, cluster);
-                    trans.push(item[1].op[1]);
+                    //trans.push(item[1].op[1]);
                     
                     //let info = JSON.parse(item[1].op[1].memo);
                     //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
@@ -72,6 +91,11 @@ var getNames = function(cluster,namesExpanded){
             console.log(currentCluster);
             console.log(cluster+1);
             console.log(names);
+            
+            //здесь массив names уже содержит все необходимые имена для построения узлов и получения транзакций
+            
+            
+            //=========================================================================================
             //console.log(trans);
             
             //console.log(namesToNodes(names,cluster+1));
@@ -89,9 +113,11 @@ var getNames = function(cluster,namesExpanded){
                 //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
                 //console.log(namesToNodes(names));
             });*/
+            //=========================================================================================
+            
             cluster++;
-            if(cluster<namesExpanded.length) getNames(cluster,namesExpanded);
-        }else{
+            if(cluster < namesExpanded.length) getNames(cluster, namesExpanded);
+        } else {
             console.log(err);
         }
     });    
