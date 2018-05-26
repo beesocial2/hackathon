@@ -23,7 +23,7 @@ var trans = [];
 let namesExt = [];// more info about accounts
 
 /*текущий кластер - работает как индекс для строки в двумерном массиве names*/
-var cluster = 0;
+//var cluster = 0;
 
 /*Двумерный массив для имен, хранит минимальную инфу для построения узлов*/
 var names = new Array();
@@ -76,25 +76,30 @@ var getNames = function(cluster, namesExpanded) {
         if(!err) {
             result.forEach( function(item) {
                 if(item[1].op[0] == "transfer" ) {
-                    //console.log(item);
-                    //console.log(item);
+                    
                     addNewToDSA(item[1].op[1].from, names, cluster);
                     addNewToDSA(item[1].op[1].to, names, cluster);
+                    addNewTrans(item[1],trans);
                     //trans.push(item[1].op[1]);
                     
                     //let info = JSON.parse(item[1].op[1].memo);
                     //console.log('from: '+item[1].op[1].from+' to: '+item[1].op[1].to+' json: '+item[1].op[1].memo);
                 }
             });
-            console.log(names[cluster]);
-            console.log(namesExpanded);
-            console.log(currentCluster);
-            console.log(cluster+1);
-            console.log(names);
+            console.log(names[cluster]);//текущая строка с окружением центрального имени
+            console.log(namesExpanded);//какие имена центральные
+            console.log(currentCluster);//номер группы (от 1 до ...)
+            console.log(cluster+1);//номер строки в массиве (от 0 до ...)
+            console.log(names);//полный массив имен
+            console.log(trans);//список транзакций для всех имен в массиве names
             
-            //здесь массив names уже содержит все необходимые имена для построения узлов и получения транзакций
+            /*здесь массив names уже содержит все необходимые имена для построения узлов,
+                а массив trans имеет транзакции без повторок и готов к построению связей
+            */
             
             
+            
+            //это старое
             //=========================================================================================
             //console.log(trans);
             
@@ -123,8 +128,29 @@ var getNames = function(cluster, namesExpanded) {
     });    
 }
 
+var getTransactions = function() {
+    getAccountsInfo(['beesocial'], function(err, result) {
+        if( ! err ) {
+            console.log(result);
+        }
+        
+        //namesExt = result;
+        //let output = namesToNodes(names,namesExt);
+        //console.log(output);
+        //console.log( JSON.parse(output));
+        //let jsonData = makeJSON(namesToNodes(names,namesExt),transfersToLines(trans,names));
+        //callback(jsonData);
+        //console.log(trans);
+        //console.log(json_metadata);
+        //console.log(JSON.parse(json_metadata));
+        //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
+        //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
+        //console.log(namesToNodes(names));
+    });
+}
 
 /*adds the element to the array if there is not the same one*/
+/*функция в общем виде, работает, если element имеет базовый тип*/
 var addNew = function(element, array){
     let same = false;
     array.forEach(function(item){
@@ -155,6 +181,23 @@ var isHere = function(element, array){
     return res;
 }
 
+/*Adds new transaction to the array if there's no matches with previous trx_id*/
+var addNewTrans = function(element, array) {
+    let same = true;
+    
+    array.forEach( function(item) {
+        if( item.trx_id == element.trx_id) {
+            same = false;
+        }
+    });
+    
+    if( same) {
+        array.push(element);
+    }
+    return array;
+}
+
+
 var getIndexByName = function(name,names){
     let index=null;
     names.forEach(function(item,i){
@@ -167,6 +210,8 @@ var getIndexByName = function(name,names){
         return index;
     }
 }
+
+
 var namesToNodes = function(names,cluster){
     //"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1}];
     //let output = '"nodes":[';
@@ -185,6 +230,8 @@ var namesToNodes = function(names,cluster){
     //console.log(output);
     return output;
 }
+
+
 var transfersToLines = function(trans,names){
     //"links":[{"source":1,"target":0,"value":10}]
     let output = '"links":[';
