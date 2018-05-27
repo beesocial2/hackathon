@@ -59,18 +59,10 @@ var getJsonData = function(currentName, newCluster, callback) {
         один элемент этого массива - один центральный узел в графе.
         Все остальные имена выстраиваются вокруг них    
     */
-    getNames(0, namesExpanded, function(result){
-        //console.log(result);
+    getNames(0, namesExpanded, function(result) {
+        console.log(result);
         callback(result);
     });
-    
-    
-    
-    //запуск рекурсивной функции. Внутри names заполняется правильно - легко сделать правильную jsonData.nodes
-    //решить вопрос с получением инфы о транзакциях
-    //решить вопрос как вернуть результат
-    
-    
 }
 
 
@@ -104,7 +96,7 @@ var getNames = function(cluster, namesExpanded, callback) {
                 а массив trans имеет транзакции без повторок и готов к построению связей
             */
             
-            callback(namesToNodes(names));
+            
             
             //это старое
             //=========================================================================================
@@ -128,7 +120,17 @@ var getNames = function(cluster, namesExpanded, callback) {
             //=========================================================================================
             
             cluster++;
-            if(cluster < namesExpanded.length) getNames(cluster, namesExpanded);
+            if(cluster < namesExpanded.length) {
+                console.log('new call');
+                getNames(cluster, namesExpanded, callback);
+                
+            } else {
+                console.log('result is ready');
+                let result = namesToNodes(names);
+                console.log(result);
+                callback(result);
+            }
+            
         } else {
             console.log(err);
         }

@@ -102,7 +102,7 @@
         window.addEventListener('load', function() {
             
             /*Recieving the data about transactions of account with the given name*/
-            getJsonData('beesocial',false,function(result){
+            getJsonData('beesocial',false, function(result) {
                 /*  jsonData - json string with all info about nodes and links that will appear in the graph (blockchainData.js)*/
                 jsonData = result;
                 console.log(jsonData);

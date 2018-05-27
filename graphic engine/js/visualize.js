@@ -272,10 +272,15 @@ var init = function (jsonData) {
                 printInfo('node click '+d.name);
                 //вызов метода дополнения jsonData
                 
-                getJsonData(d.name, 2,function(result){
-                    init(result);  
+                getJsonData(d.name, true, function(result){
+                    //console.log(result);
+                    //init(result);
+                    jsonData = result;
+                    console.log(jsonData);
+                    init(jsonData);
                 });
-            }else{
+                
+            } else{
                 expand[d.group] = !expand[d.group];
                 init(jsonData);
             }
