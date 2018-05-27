@@ -59,7 +59,12 @@ var getJsonData = function(currentName, newCluster, callback) {
         один элемент этого массива - один центральный узел в графе.
         Все остальные имена выстраиваются вокруг них    
     */
-    getNames(0, namesExpanded);
+    getNames(0, namesExpanded, function(result){
+        //console.log(result);
+        callback(result);
+    });
+    
+    
     
     //запуск рекурсивной функции. Внутри names заполняется правильно - легко сделать правильную jsonData.nodes
     //решить вопрос с получением инфы о транзакциях
@@ -69,7 +74,7 @@ var getJsonData = function(currentName, newCluster, callback) {
 }
 
 
-var getNames = function(cluster, namesExpanded) {
+var getNames = function(cluster, namesExpanded, callback) {
     
     golos.api.getAccountHistory(namesExpanded[cluster], -1, 100, function(err, result) {
         names[cluster] = new Array();
@@ -80,6 +85,8 @@ var getNames = function(cluster, namesExpanded) {
                     addNewToDSA(item[1].op[1].from, names, cluster);
                     addNewToDSA(item[1].op[1].to, names, cluster);
                     addNewTrans(item[1],trans);
+                    
+                    
                     //trans.push(item[1].op[1]);
                     
                     //let info = JSON.parse(item[1].op[1].memo);
@@ -97,7 +104,7 @@ var getNames = function(cluster, namesExpanded) {
                 а массив trans имеет транзакции без повторок и готов к построению связей
             */
             
-            
+            callback(namesToNodes(names));
             
             //это старое
             //=========================================================================================
@@ -211,8 +218,27 @@ var getIndexByName = function(name,names){
     }
 }
 
-
-var namesToNodes = function(names,cluster){
+var namesToNodes = function(names){
+    let output = {};
+    output.nodes = [];
+    output.links = [];
+    
+    let i = 0;
+    let j = 0;
+    for(i=0; i< names.length; i++){
+        for(j=0; j<names[i].length; j++){
+            let node = {};
+            node.name = names[i][j];
+            node.group = i;
+            output.nodes.push(node);
+        }
+    }
+    
+    //console.log(output);
+    let result = JSON.stringify(output);
+    return result;
+}
+/*var namesToNodes = function(names,cluster){
     //"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1}];
     //let output = '"nodes":[';
     let output = '';
@@ -220,16 +246,16 @@ var namesToNodes = function(names,cluster){
         output += '{';
         output += '"name":"'+item+'","group":'+cluster;//+',';
         //output += '"misc":'+namesExt[i];
-        if(i==names.length-1){
+        if(i == names.length-1){
             output += '}';    
         }else{
             output += '},';
-        }    
+        }
     });
     //output+=']';
     //console.log(output);
     return output;
-}
+}*/
 
 
 var transfersToLines = function(trans,names){
