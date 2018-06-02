@@ -60,7 +60,7 @@ var getJsonData = function(currentName, newCluster, callback) {
         Все остальные имена выстраиваются вокруг них    
     */
     getNames(0, namesExpanded, function(result) {
-        console.log(result);
+        //console.log(result);
         callback(result);
     });
 }
@@ -126,7 +126,7 @@ var getNames = function(cluster, namesExpanded, callback) {
                 
             } else {
                 console.log('result is ready');
-                let result = namesToNodes(names);
+                let result = dataToObject(names, trans);
                 console.log(result);
                 callback(result);
             }
@@ -160,7 +160,7 @@ var getTransactions = function() {
 
 /*adds the element to the array if there is not the same one*/
 /*функция в общем виде, работает, если element имеет базовый тип*/
-var addNew = function(element, array){
+var addNew = function(element, array) {
     let same = false;
     array.forEach(function(item){
         if(item == element) same = true;
@@ -170,7 +170,7 @@ var addNew = function(element, array){
 }
 
 /*Add new to double size array*/
-var addNewToDSA = function(element, array, cluster){
+var addNewToDSA = function(element, array, cluster) {
     let i=0,j=0,same=false;
     for(;i<array.length;i++){
         for(j=0;j<array[i].length;j++){
@@ -182,7 +182,7 @@ var addNewToDSA = function(element, array, cluster){
 }
 
 /*Says is the element in the array*/
-var isHere = function(element, array){
+var isHere = function(element, array) {
     let res = false;
     array.forEach(function(item){
         if(item==element) res=true;
@@ -207,34 +207,78 @@ var addNewTrans = function(element, array) {
 }
 
 
-var getIndexByName = function(name,names){
-    let index=null;
-    names.forEach(function(item,i){
-        if(name==item) index=i;
+var getIndexByNameFromNodes = function(name, nodes) {
+    let index = -1;
+    nodes.forEach(function(item, i) {
+        if(name == item.name) index = i;
     });
     
-    if(index==null){
+    if(index == -1) {
         console.log('error in seeking index of name!');  
-    } else{
+    } else {
         return index;
     }
 }
 
-var namesToNodes = function(names){
+/*returns an index of the name in the general array and number of its cluster*/
+/*var getIndexByName = function(element) {
+    
+    let index = {};
+    index.i = -1;
+    index.j = -1;
+    
+    
+    let i = 0;
+    let j = 0;
+    for(i=0; i < names.length; i++) {
+        for(j=0; j < names[i].length; j++) {
+            
+            if(element == names[i][j]) {
+                
+                index.i = i;
+                index.j = j;
+                break;
+            } 
+        }
+    }
+    
+    if(index.i == -1 || index.j == -1) {
+        
+        console.log('this name not found!');
+        //вывести инфу об ошибке
+        //console.log('name: '++)
+    } else {
+        return index;
+    }
+}*/
+
+
+var dataToObject = function(names, trans) {
     let output = {};
     output.nodes = [];
     output.links = [];
     
+    /*names to nodes*/
     let i = 0;
     let j = 0;
-    for(i=0; i< names.length; i++){
-        for(j=0; j<names[i].length; j++){
+    for(i=0; i < names.length; i++) {
+        for(j=0; j < names[i].length; j++) {
             let node = {};
             node.name = names[i][j];
             node.group = i;
             output.nodes.push(node);
         }
     }
+    
+    /*transactions to links*/
+    trans.forEach( function(item, i) {
+        let link = {};
+        link.source = getIndexByNameFromNodes(item.op[1].from, output.nodes);
+        link.target = getIndexByNameFromNodes(item.op[1].to, output.nodes);
+        link.value = GOLOStoNumber( item.op[1].amount );
+        output.links.push(link);
+    });
+    
     
     //console.log(output);
     let result = JSON.stringify(output);
@@ -277,6 +321,7 @@ var transfersToLines = function(trans,names){
     console.log(output);
     return output;
 }
+
 var makeJSON = function(nodes,lines){
     return '{'+nodes+','+lines+'}';
 }
