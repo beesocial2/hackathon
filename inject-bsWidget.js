@@ -21,6 +21,7 @@ widgetButton.id = 'initButton';
 widgetButton.className = 'btn btn-primary';
 widgetButton.innerHTML = 'Pay with GOLOS';
 document.querySelector('.bsMerch').appendChild(widgetButton); // button inject
+
 lds = document.createElement('div');
 lds.className = 'lding';
 lds.innerHTML = `<div class="lds-css ng-scope">
@@ -37,7 +38,7 @@ document.querySelector('#initButton').addEventListener('click', () => {
 document.querySelector('.lding').style.display = 'block';
 framediv = document.createElement('div');
 framediv.className = 'framediv';
-framediv.innerHTML = `<iframe frameborder="0" allowtransparency="true" src="bsWidget.html" style="display: none;"></iframe>`;
+framediv.innerHTML = `<iframe id="bsIframe" frameborder="0" allowtransparency="true" src="bsWidget.html" style="display: none;"></iframe>`;
 document.querySelector('.bsMerch').appendChild(framediv); // div inject
  var iframe = document.getElementsByTagName('iframe')[0];
   iframe.onload = function() {
@@ -53,5 +54,13 @@ document.querySelector('.bsMerch').appendChild(framediv); // div inject
 			top: 0px;
 			width: 100%;
 			height: 100%;"`;
+	iframe.contentWindow.postMessage(
+		`{ "data-account" : "` + document.querySelector('.golos-merchant-button').getAttribute('data-account') + `", 
+		"data-amount" : "` + document.querySelector('.golos-merchant-button').getAttribute('data-amount') + `",
+		"data-fixprice" : "` + document.querySelector('.golos-merchant-button').getAttribute('data-fixprice') + `",
+		"data-description" : "` + document.querySelector('.golos-merchant-button').getAttribute('data-description') + `",
+		"data-image" : "` + document.querySelector('.golos-merchant-button').getAttribute('data-image') + `"
+		}` 
+		, '*');	// get attr&send
   };
 }, false);

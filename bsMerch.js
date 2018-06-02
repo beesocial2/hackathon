@@ -31,7 +31,7 @@ window.addEventListener('load', function () { // init script after page loaded
 	console.log('<f> doc loaded');
 	window.parent.postMessage('modalBs.show', '*');
 	/*golos.config.set('chain_id', '5876894a41e6361bde2e73278f07340f2eb8b41c2facd29099de9deef6cdb679');
-	golos.config.set('websocket', 'wss://ws.testnet.golos.io');*/
+	golos.config.set('websocket', 'wss://ws.testnet.golos.io');*/ 
 	modalBs = new Modal(document.getElementById('bsModal'));
 	if (wif) { // opens modal
 		getGolosAccount();
@@ -57,7 +57,8 @@ function getGolosAccount() {
 		document.querySelector('#balanceGolosValue').innerHTML = response[0].balance;
 		document.querySelector('#transfersGbg a').href = 'https://golos.io/@' + response[0].name + '/transfers';
 		document.querySelector('#transfersGbgValue').innerHTML = response[0].sbd_balance;
-//		console.log(response[0]); // debug
+		
+		//document.querySelector('#bsIframe').contentWindow.postMessage(msg, '*'); // send data to iframe
 		//response[0].balance = '200000.000 GOLOS'; // test
 		document.querySelector('#totalAmount').step = 0.001;
 		document.querySelector('#totalAmount').min = 0;
@@ -80,3 +81,7 @@ function getGolosAccount() {
 		document.querySelector('#inputAmount').value = document.querySelector('#totalAmount').value; // sync range & input
 	});
 }
+
+window.addEventListener('message', function (e) {
+				console.log('message', JSON.parse(e.data)); // debug
+        });
