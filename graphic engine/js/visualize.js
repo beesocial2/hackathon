@@ -247,10 +247,8 @@ var init = function (jsonData) {
             let toNameId = getIndexByNameFromData(d.target.name);
             let fromNameId = getIndexByNameFromData(d.source.name);
             //console.log(d.value);
-            printInfo('links between: '+d.source.name+' ('+fromNameId+') and '+d.target.name+' ('+toNameId+') ');
-        })
-        .on("click", function(d) {
-            getExtendedDataAboutTrans(d.source.name, d.target.name);
+            //printInfo('links between: '+d.source.name+' ('+fromNameId+') and '+d.target.name+' ('+toNameId+') ');
+            writeInfoAbout('links between: '+d.source.name+' ('+fromNameId+') and '+d.target.name+' ('+toNameId+') ','link');
         });
 
     node = nodeg.selectAll("circle.node").data(net.nodes, nodeid);
@@ -279,7 +277,8 @@ var init = function (jsonData) {
             if(expand[d.group]){
                 
                 //только для узлов в открытом кластере
-                printInfo('node click '+d.name);
+                //printInfo('node click '+d.name);
+                writeInfoAbout('node click '+d.name, 'node');
                 
                 //вызов метода дополнения jsonData
                 getJsonData(d.name, true, function(result){
@@ -295,7 +294,8 @@ var init = function (jsonData) {
         })
         .on("mouseover",function(d) {
             if(expand[d.group]){
-                printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
+                writeInfoAbout('id: '+getIndexByNameFromData(d.name)+', name: '+d.name, 'node');
+                //printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
             }
         });
         /*.on("mouseout",function(d) {
@@ -379,6 +379,20 @@ var makeLinkInfoString = function(nameFrom, nameTo) {
         }
     });
     return result;
+}
+
+var writeInfoAbout = function(text, about) {
+    let message = document.createElement('div');
+    message.classList = 'alert';
+    if( about == 'node') {
+        message.classList += ' alert-primary';
+        message.innerHTML = 'Node: ';
+    } else if (about == 'link') {
+        message.classList += ' alert-success';
+        message.innerHTML = 'Link: ';
+    }
+    message.innerHTML += text;
+    document.getElementById('graph-description').appendChild(message);
 }
 
 //var getInfoAboutNode = function(){};
