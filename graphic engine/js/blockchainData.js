@@ -206,7 +206,7 @@ var addNewTrans = function(element, array) {
     return array;
 }
 
-
+/*returns an index of the name in the array of nodes*/
 var getIndexByNameFromNodes = function(name, nodes) {
     let index = -1;
     nodes.forEach(function(item, i) {
@@ -219,39 +219,6 @@ var getIndexByNameFromNodes = function(name, nodes) {
         return index;
     }
 }
-
-/*returns an index of the name in the general array and number of its cluster*/
-/*var getIndexByName = function(element) {
-    
-    let index = {};
-    index.i = -1;
-    index.j = -1;
-    
-    
-    let i = 0;
-    let j = 0;
-    for(i=0; i < names.length; i++) {
-        for(j=0; j < names[i].length; j++) {
-            
-            if(element == names[i][j]) {
-                
-                index.i = i;
-                index.j = j;
-                break;
-            } 
-        }
-    }
-    
-    if(index.i == -1 || index.j == -1) {
-        
-        console.log('this name not found!');
-        //вывести инфу об ошибке
-        //console.log('name: '++)
-    } else {
-        return index;
-    }
-}*/
-
 
 var dataToObject = function(names, trans) {
     let output = {};
