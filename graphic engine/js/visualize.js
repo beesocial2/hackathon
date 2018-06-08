@@ -206,7 +206,7 @@ var init = function (jsonData) {
             return 1;
         })
         .gravity(0.05)   // gravity+charge tweaked to ensure good 'grouped' view (e.g. green group not smack between blue&orange, ...
-        .charge(-600)    // ... charge is important to turn single-linked groups to the outside
+        .charge(-2000)    // ... charge is important to turn single-linked groups to the outside
         .friction(0.1)   // friction adjusted to get dampened display: less bouncy bouncy ball [Swedish Chef, anyone?]
         .start();
 
@@ -322,14 +322,6 @@ var init = function (jsonData) {
             .attr("cy", function(d) { return d.y; });
     });
     
-    //addEventsForNodes();
-    
-    /*Array.from(document.getElementsByClassName('node')).forEach(function(item){
-        new Tooltip(item, {
-            placement: 'top', // or bottom, left, right, and variations
-            title: "Top"
-        });
-    });*/
     tippy('circle.node');
     tippy('line.link');
 }
@@ -366,6 +358,7 @@ var getExtendedDataAboutTrans = function(nameFrom, nameTo) {
     return result;
 }
 
+/*Builds a text about some transactions between given nodes*/
 var makeLinkInfoString = function(nameFrom, nameTo) {
     let toNameId = getIndexByNameFromData(nameTo);
     let fromNameId = getIndexByNameFromData(nameFrom);
@@ -381,6 +374,7 @@ var makeLinkInfoString = function(nameFrom, nameTo) {
     return result;
 }
 
+/*Makes message box with text about node or link when a certain event is triggered*/
 var writeInfoAbout = function(text, about) {
     let message = document.createElement('div');
     message.classList = 'alert';
