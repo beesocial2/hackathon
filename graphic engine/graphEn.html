@@ -16,6 +16,9 @@
           stroke: #555;
           stroke-width: 3px;
         }
+        circle.node:hover{
+            cursor: pointer;
+        }
         circle.leaf {
           stroke: #fff;
           stroke-width: 1.5px;
@@ -33,34 +36,45 @@
             stroke: #000;
             stroke-opacity: 0.7;
         }
-        .wrapper{
+        
+        .wrapper, .utility{
             display: flex;
             justify-content: center;
         }
-        .pic, .descr{
+        .pic, .instructions, .descr, .buttons{
             padding: 5px;
         }
-        .pic, .wrapper h5{
+        .pic, .instructions, .wrapper h5{
             margin-bottom: 5px;
             text-align: center;
         }
-        .pic{
+        .pic, .instructions{
             width: 70%;
         }
-        .descr{
+        .descr, .buttons{
             width: 30%;
         }
         .descr>div{
             height: 600px;
+            overflow-y: scroll;
         }
-        svg, .descr>div{
-          border: 1px solid #ccc;
+        svg, .descr>div, .instructions>div{
+            border: 1px solid #ccc;
+            text-align: left;
+            font-size: 15pt;
         }
         #graph-description{
             padding: 10px;
         }
         #graph-description p{
             color: rgba(0,0,0,.8);
+        }
+        .instructions>div li{
+            padding: 5px 0px;
+        }
+        .buttons{
+            display: flex;
+            justify-content: center;
         }
     </style>
   </head>
@@ -75,6 +89,28 @@
               <h5>description</h5>
               <div id='graph-description'>
                   
+              </div>
+          </section>
+      </div>
+      
+      <div class="utility">
+          <section class="instructions">
+              <h5>instructions</h5>
+              <div>
+                  <ul>
+                      <li>Hovering the mouse on a cluster shows its number</li>
+                      <li>Click on the cluster to expand it</li>
+                      <li>Hover the mouse on a node or link to see the information about them</li>
+                      <li>The bolder a link, the more transactions were between connected nodes</li>
+                      <li>Click on a node to build on the graph and see further nodes and links</li>
+                      <li>Click on the button "Clear graph" to restore it to the initial form</li>
+                  </ul>
+              </div>
+          </section>
+          <section class="buttons">
+              <div>
+                  <button class="btn btn-success mx-2" id="clear-graph">Clear graph</button>
+                  <button class="btn btn-success mx-2" id="clear-log">Clear log</button>
               </div>
           </section>
       </div>
@@ -105,7 +141,7 @@
             getJsonData('beesocial',false, function(result) {
                 /*  jsonData - json string with all info about nodes and links that will appear in the graph (blockchainData.js)*/
                 jsonData = result;
-                console.log(jsonData);
+                //console.log(jsonData);
                 
                 /*  Launching the process of drawing (visualize.js required)*/
                 init(jsonData);
@@ -132,7 +168,19 @@
             },2000);
             
         });*/
+        document.getElementById('clear-log').addEventListener("click", function() {
+            document.getElementById('graph-description').innerHTML = '';    
+        });
         
+        document.getElementById('clear-graph').addEventListener("click", function() {
+            jsonData = '';
+            namesExpanded = [];
+            console.log('clear graph');
+            getJsonData('beesocial',false, function(result) {
+                jsonData = result;
+                init(jsonData);
+            });  
+        });
     </script>
     
   </body>

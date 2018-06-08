@@ -108,12 +108,7 @@ function network(data, prev, index, expand) {
     }
     
     for (i in lm) { links.push(lm[i]); }
-    
-    /*console.log(nodes);
-    console.log(data.nodes);
-    console.log(links);
-    console.log(data.links);*/
-    
+        
     return {nodes: nodes, links: links};
 }
 
@@ -161,13 +156,8 @@ var init = function (jsonData) {
    
     for (var i=0; i<data.links.length; ++i) {
         o = data.links[i];
-        //console.log(o);
-        //console.log(data.nodes[o.source]);
-        //console.log(data.nodes[o.target]);
         o.source = data.nodes[o.source];
- 
         o.target = data.nodes[o.target];
-        //console.log(o);
     }
     hullg = vis.append("g");
     linkg = vis.append("g");
@@ -203,7 +193,7 @@ var init = function (jsonData) {
         // nodes of another group or other group node or between two group nodes.
         //
         // The latter was done to keep the single-link groups ('blue', rose, ...) close.
-        return 150 +
+        return 200 +
         Math.min(20 * Math.min((n1.size || (n1.group != n2.group ? n1.group_data.size : 0)),
                              (n2.size || (n1.group != n2.group ? n2.group_data.size : 0))),
            -30 +
@@ -241,18 +231,27 @@ var init = function (jsonData) {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; })
         .attr("ID", function (d,i) { return i;})
-        .attr("title", function(d){ 
-            let toNameId = getIndexByNameFromData(d.target.name);
-            let fromNameId = getIndexByNameFromData(d.source.name);
-            return 'from: '+d.source.name+' ('+fromNameId+'); to: '+d.target.name+' ('+toNameId+'), value: '+ d.amount;
+        .attr("title", function(d){
+            //let toNameId = getIndexByNameFromData(d.target.name);
+            //let fromNameId = getIndexByNameFromData(d.source.name);
+            console.log(d);
+            if( expand[d.source.group] && expand[d.target.group] ) {
+                return makeLinkInfoString(d.target.name, d.source.name);
+            }
+            return '';
+            //console.log(d.source.name);
+            //return 'from: '+d.source.name+' ('+fromNameId+'); to: '+d.target.name+' ('+toNameId+'), value: '+ d.amount;
         })
-        .style("stroke-width", function(d) { return d.size+3 || 3; });
-        /*.on("mouseover",function(d) {
+        .style("stroke-width", function(d) { return d.size+3 || 3; })
+        .on("mouseover",function(d) {
             let toNameId = getIndexByNameFromData(d.target.name);
             let fromNameId = getIndexByNameFromData(d.source.name);
             //console.log(d.value);
-            printInfo('from: '+d.source.name+' ('+fromNameId+'); to: '+d.target.name+' ('+toNameId+'), value: '+ d.amount);
-        });*/
+            printInfo('links between: '+d.source.name+' ('+fromNameId+') and '+d.target.name+' ('+toNameId+') ');
+        })
+        .on("click", function(d) {
+            getExtendedDataAboutTrans(d.source.name, d.target.name);
+        });
 
     node = nodeg.selectAll("circle.node").data(net.nodes, nodeid);
     node.exit().remove();
@@ -278,35 +277,33 @@ var init = function (jsonData) {
         .on("click", function(d) {
             console.log("node click", d, arguments, this, expand[d.group]);
             if(expand[d.group]){
+                
                 //только для узлов в открытом кластере
                 printInfo('node click '+d.name);
-                //вызов метода дополнения jsonData
                 
+                //вызов метода дополнения jsonData
                 getJsonData(d.name, true, function(result){
-                    //console.log(result);
-                    //init(result);
                     jsonData = result;
-                    console.log(jsonData);
                     init(jsonData);
                 });
                 
-            } else{
+            } else {
                 expand[d.group] = !expand[d.group];
                 init(jsonData);
             }
             
-        });
-        /*.on("mouseover",function(d) {
+        })
+        .on("mouseover",function(d) {
             if(expand[d.group]){
                 printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
             }
-        })
-        .on("mouseout",function(d) {
-            /*if(expand[d.group]){
+        });
+        /*.on("mouseout",function(d) {
+            if(expand[d.group]){
                 printInfo('id: '+getIndexByNameFromData(d.name)+', name: '+d.name);
-            }*/
+            }
             //console.log("node hover out");
-        //});
+        });*/
 
     node.call(force.drag);
     
@@ -339,21 +336,49 @@ var init = function (jsonData) {
 
 var printInfo = function(text){
     let block = document.getElementById('graph-description');
-    block.innerHTML = '';
-    block.innerHTML = '<p>'+text+'</p>';
+    //block.innerHTML = '';
+    block.innerHTML += '<p>'+text+'</p>';
 }
 
-var getIndexByNameFromData = function(name){
-    let index=null;
-    data.nodes.forEach(function(item,i){
-        if(name==item.name) index=i;
+var getIndexByNameFromData = function(name) {
+    let index = null;
+    data.nodes.forEach(function(item, i) {
+        if(name == item.name) index = i;
     });
     
-    if(index==null){
+    if(index == null) {
         console.log('error name '+name+' not found in visualize str: 290 !');  
-    } else{
+    } else {
         return index;
     }
+}
+
+/*Returns list of all transactions between given nodes*/
+var getExtendedDataAboutTrans = function(nameFrom, nameTo) {
+    let result = [];
+    data.links.forEach( function(item, i) {
+        if( (item.misc.op[1].from == nameFrom && item.misc.op[1].to == nameTo) ||
+            (item.misc.op[1].from == nameTo && item.misc.op[1].to == nameFrom)
+          ) {
+            result.push(item);
+        }
+    });
+    return result;
+}
+
+var makeLinkInfoString = function(nameFrom, nameTo) {
+    let toNameId = getIndexByNameFromData(nameTo);
+    let fromNameId = getIndexByNameFromData(nameFrom);
+    
+    let info = getExtendedDataAboutTrans(nameFrom, nameTo);
+    let result = '';
+    info.forEach( function(item, i) {
+        result += ( '' +(i+1)+ ') from: ' +item.source.name+ ', to: ' +item.target.name+ ', amount: ' +item.value+ 'GOLOS');
+        if(i != info.length) {
+            result += '<br>';
+        }
+    });
+    return result;
 }
 
 //var getInfoAboutNode = function(){};

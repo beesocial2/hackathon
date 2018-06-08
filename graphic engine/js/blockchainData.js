@@ -121,13 +121,13 @@ var getNames = function(cluster, namesExpanded, callback) {
             
             cluster++;
             if(cluster < namesExpanded.length) {
-                console.log('new call');
+                //console.log('new call');
                 getNames(cluster, namesExpanded, callback);
                 
             } else {
-                console.log('result is ready');
+                //console.log('result is ready');
                 let result = dataToObject(names, trans);
-                console.log(result);
+                //console.log(result);
                 callback(result);
             }
             
@@ -137,26 +137,6 @@ var getNames = function(cluster, namesExpanded, callback) {
     });    
 }
 
-var getTransactions = function() {
-    getAccountsInfo(['beesocial'], function(err, result) {
-        if( ! err ) {
-            console.log(result);
-        }
-        
-        //namesExt = result;
-        //let output = namesToNodes(names,namesExt);
-        //console.log(output);
-        //console.log( JSON.parse(output));
-        //let jsonData = makeJSON(namesToNodes(names,namesExt),transfersToLines(trans,names));
-        //callback(jsonData);
-        //console.log(trans);
-        //console.log(json_metadata);
-        //console.log(JSON.parse(json_metadata));
-        //console.log('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}');
-        //console.log(JSON.parse('{"nodes":[{"name":"Myriel","group":1},{"name":"Myriel1","group":1}]}'));
-        //console.log(namesToNodes(names));
-    });
-}
 
 /*adds the element to the array if there is not the same one*/
 /*функция в общем виде, работает, если element имеет базовый тип*/
@@ -206,7 +186,7 @@ var addNewTrans = function(element, array) {
     return array;
 }
 
-/*returns an index of the name in the array of nodes*/
+/*Returns an index of the name in the array of nodes    */
 var getIndexByNameFromNodes = function(name, nodes) {
     let index = -1;
     nodes.forEach(function(item, i) {
@@ -220,6 +200,7 @@ var getIndexByNameFromNodes = function(name, nodes) {
     }
 }
 
+/*Transforms recived data from blockchain to the valid json format for drawing the graph*/
 var dataToObject = function(names, trans) {
     let output = {};
     output.nodes = [];
@@ -243,35 +224,16 @@ var dataToObject = function(names, trans) {
         link.source = getIndexByNameFromNodes(item.op[1].from, output.nodes);
         link.target = getIndexByNameFromNodes(item.op[1].to, output.nodes);
         link.value = GOLOStoNumber( item.op[1].amount );
+        link.misc = item;
         output.links.push(link);
     });
     
-    
-    //console.log(output);
     let result = JSON.stringify(output);
     return result;
 }
-/*var namesToNodes = function(names,cluster){
-    //"nodes":[{"name":"Myriel","group":1},{"name":"Myriel3","group":1}];
-    //let output = '"nodes":[';
-    let output = '';
-    names.forEach(function(item,i){
-        output += '{';
-        output += '"name":"'+item+'","group":'+cluster;//+',';
-        //output += '"misc":'+namesExt[i];
-        if(i == names.length-1){
-            output += '}';    
-        }else{
-            output += '},';
-        }
-    });
-    //output+=']';
-    //console.log(output);
-    return output;
-}*/
 
 
-var transfersToLines = function(trans,names){
+/*var transfersToLines = function(trans,names){
     //"links":[{"source":1,"target":0,"value":10}]
     let output = '"links":[';
     trans.forEach(function(item,i){
@@ -287,11 +249,11 @@ var transfersToLines = function(trans,names){
     output+=']';
     console.log(output);
     return output;
-}
+}*/
 
-var makeJSON = function(nodes,lines){
+/*var makeJSON = function(nodes,lines){
     return '{'+nodes+','+lines+'}';
-}
+}*/
 var GOLOStoNumber = function(amount){
     return Number(amount.substr(0,amount.indexOf(' ')));
 }
