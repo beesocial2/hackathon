@@ -47,6 +47,8 @@ function network(data, prev, index, expand) {
             } else {
                 o = gc[i] || (gc[i] = {x:0,y:0,count:0});
                 o.x += n.x;
+                //o.x = 750;
+                //o.y = 250;
                 o.y += n.y;
                 o.count += 1;
             }
@@ -65,8 +67,10 @@ function network(data, prev, index, expand) {
             nodes.push(n);
             if (gn[i]) {
                 // place new nodes at cluster location (plus jitter)
-                n.x = gn[i].x + Math.random();
-                n.y = gn[i].y + Math.random();
+                //n.x = gn[i].x + Math.random();
+                //n.y = gn[i].y + Math.random();
+                n.x = gn[i].x;
+                n.y = gn[i].y;
             }
         } else {
             // the node is part of a collapsed cluster
@@ -75,8 +79,10 @@ function network(data, prev, index, expand) {
                 nm[i] = nodes.length;
                 nodes.push(l);
                 if (gc[i]) {
-                    l.x = gc[i].x / gc[i].count;
-                    l.y = gc[i].y / gc[i].count;
+                    //l.x = gc[i].x / gc[i].count;
+                    //l.y = gc[i].y / gc[i].count;
+                    l.x = 700;
+                    l.y = 250;
                 }
             }
             l.nodes.push(n);
@@ -206,7 +212,7 @@ var init = function (jsonData) {
             return 1;
         })
         .gravity(0.05)   // gravity+charge tweaked to ensure good 'grouped' view (e.g. green group not smack between blue&orange, ...
-        .charge(-2000)    // ... charge is important to turn single-linked groups to the outside
+        .charge(-1000)    // ... charge is important to turn single-linked groups to the outside
         .friction(0.1)   // friction adjusted to get dampened display: less bouncy bouncy ball [Swedish Chef, anyone?]
         .start();
 
@@ -232,23 +238,24 @@ var init = function (jsonData) {
         .attr("y2", function(d) { return d.target.y; })
         .attr("ID", function (d,i) { return i;})
         .attr("title", function(d){
-            //let toNameId = getIndexByNameFromData(d.target.name);
-            //let fromNameId = getIndexByNameFromData(d.source.name);
             console.log(d);
             if( expand[d.source.group] && expand[d.target.group] ) {
-                return makeLinkInfoString(d.target.name, d.source.name);
+                return makeLinkInfoString(d.target.name, d.source.name, false);
+            } else {
+                return '';  
             }
-            return '';
-            //console.log(d.source.name);
-            //return 'from: '+d.source.name+' ('+fromNameId+'); to: '+d.target.name+' ('+toNameId+'), value: '+ d.amount;
         })
         .style("stroke-width", function(d) { return d.size+3 || 3; })
         .on("mouseover",function(d) {
-            let toNameId = getIndexByNameFromData(d.target.name);
-            let fromNameId = getIndexByNameFromData(d.source.name);
-            //console.log(d.value);
-            //printInfo('links between: '+d.source.name+' ('+fromNameId+') and '+d.target.name+' ('+toNameId+') ');
-            writeInfoAbout('links between: '+d.source.name+' ('+fromNameId+') and '+d.target.name+' ('+toNameId+') ','link');
+            //let toNameId = getIndexByNameFromData(d.target.name);
+            //let fromNameId = getIndexByNameFromData(d.source.name);
+            //writeInfoAbout('links between: '+d.source.name+' ('+fromNameId+') and '+d.target.name+' ('+toNameId+') ','link');
+            if( expand[d.source.group] && expand[d.target.group] ) {
+                writeInfoAbout(makeLinkInfoString(d.target.name, d.source.name, true), 'link') ;
+            } else {
+                return '';  
+            }
+            //writeInfoAbout(this.getAttribute('title'),'link');
         });
 
     node = nodeg.selectAll("circle.node").data(net.nodes, nodeid);
@@ -359,7 +366,7 @@ var getExtendedDataAboutTrans = function(nameFrom, nameTo) {
 }
 
 /*Builds a text about some transactions between given nodes*/
-var makeLinkInfoString = function(nameFrom, nameTo) {
+var makeLinkInfoString = function(nameFrom, nameTo, extended) {
     let toNameId = getIndexByNameFromData(nameTo);
     let fromNameId = getIndexByNameFromData(nameFrom);
     
@@ -367,6 +374,10 @@ var makeLinkInfoString = function(nameFrom, nameTo) {
     let result = '';
     info.forEach( function(item, i) {
         result += ( '' +(i+1)+ ') from: ' +item.source.name+ ', to: ' +item.target.name+ ', amount: ' +item.value+ 'GOLOS');
+        if(extended == true) {
+            result += (', trx_id: ' +item.misc.trx_id);
+        }
+        
         if(i != info.length) {
             result += '<br>';
         }
@@ -376,14 +387,15 @@ var makeLinkInfoString = function(nameFrom, nameTo) {
 
 /*Makes message box with text about node or link when a certain event is triggered*/
 var writeInfoAbout = function(text, about) {
+    document.getElementById('graph-description').innerHTML = '';
     let message = document.createElement('div');
     message.classList = 'alert';
     if( about == 'node') {
         message.classList += ' alert-primary';
-        message.innerHTML = 'Node: ';
+        message.innerHTML = 'Nodes:<br> ';
     } else if (about == 'link') {
         message.classList += ' alert-success';
-        message.innerHTML = 'Link: ';
+        message.innerHTML = 'Links:<br> ';
     }
     message.innerHTML += text;
     document.getElementById('graph-description').appendChild(message);
